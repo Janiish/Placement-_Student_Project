@@ -1,0 +1,1245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grand Luxury Hotel Management System — Project Report</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Source+Sans+3:wght@300;400;600;700&family=Fira+Code:wght@400;500&display=swap');
+
+  /* ===== RESET & BASE ===== */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --primary: #1E3C72;
+    --primary-light: #2A5298;
+    --accent: #009688;
+    --accent-dark: #00796B;
+    --success: #2E7D32;
+    --danger: #C62828;
+    --warning: #F57C00;
+    --gold: #FFC107;
+    --bg: #ffffff;
+    --text: #212121;
+    --text-secondary: #555;
+    --text-muted: #888;
+    --border: #e0e4eb;
+    --code-bg: #f5f7fa;
+    --highlight-bg: #eef3fb;
+  }
+
+  @page {
+    size: A4;
+    margin: 20mm 18mm 22mm 18mm;
+  }
+
+  body {
+    font-family: 'Source Sans 3', 'Segoe UI', sans-serif;
+    font-size: 11.5pt;
+    line-height: 1.72;
+    color: var(--text);
+    background: var(--bg);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* ===== COVER PAGE ===== */
+  .cover-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    text-align: center;
+    page-break-after: always;
+    background: linear-gradient(160deg, #f8faff 0%, #eef2f9 100%);
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cover-page::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 8px;
+    background: linear-gradient(90deg, var(--primary), var(--primary-light), var(--accent));
+  }
+
+  .cover-page::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 8px;
+    background: linear-gradient(90deg, var(--accent), var(--primary-light), var(--primary));
+  }
+
+  .cover-logo {
+    font-size: 52pt;
+    margin-bottom: 10px;
+  }
+
+  .cover-hotel-name {
+    font-family: 'Merriweather', Georgia, serif;
+    font-size: 20pt;
+    font-weight: 700;
+    color: var(--primary);
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+
+  .cover-stars {
+    font-size: 18pt;
+    color: var(--gold);
+    letter-spacing: 4px;
+    margin-bottom: 30px;
+  }
+
+  .cover-divider {
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    border: none;
+    border-radius: 2px;
+    margin: 0 auto 30px;
+  }
+
+  .cover-title {
+    font-family: 'Merriweather', Georgia, serif;
+    font-size: 28pt;
+    font-weight: 900;
+    color: var(--primary);
+    line-height: 1.25;
+    margin-bottom: 8px;
+  }
+
+  .cover-subtitle {
+    font-size: 14pt;
+    font-weight: 300;
+    color: var(--text-secondary);
+    margin-bottom: 50px;
+  }
+
+  .cover-meta-table {
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 11pt;
+    margin-bottom: 50px;
+  }
+
+  .cover-meta-table td {
+    padding: 7px 18px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .cover-meta-table td:first-child {
+    font-weight: 600;
+    color: var(--primary);
+    min-width: 160px;
+  }
+
+  .cover-footer {
+    position: absolute;
+    bottom: 40px;
+    font-size: 9.5pt;
+    color: var(--text-muted);
+  }
+
+  /* ===== TABLE OF CONTENTS ===== */
+  .toc-page {
+    page-break-after: always;
+    padding-top: 30px;
+  }
+
+  .toc-page h2 {
+    font-family: 'Merriweather', Georgia, serif;
+    font-size: 20pt;
+    color: var(--primary);
+    margin-bottom: 30px;
+    padding-bottom: 10px;
+    border-bottom: 3px solid var(--primary);
+    display: inline-block;
+  }
+
+  .toc-list {
+    list-style: none;
+    counter-reset: toc-counter;
+  }
+
+  .toc-list li {
+    counter-increment: toc-counter;
+    display: flex;
+    align-items: baseline;
+    padding: 10px 0;
+    border-bottom: 1px dotted var(--border);
+    font-size: 12pt;
+  }
+
+  .toc-list li::before {
+    content: counter(toc-counter) ".";
+    font-weight: 700;
+    color: var(--primary);
+    min-width: 32px;
+    font-size: 12pt;
+  }
+
+  .toc-list li span.toc-title {
+    flex: 1;
+  }
+
+  .toc-list li span.toc-page-num {
+    font-weight: 600;
+    color: var(--primary);
+    min-width: 30px;
+    text-align: right;
+  }
+
+  /* ===== HEADINGS ===== */
+  h1.section-title {
+    font-family: 'Merriweather', Georgia, serif;
+    font-size: 20pt;
+    font-weight: 700;
+    color: var(--primary);
+    margin: 10px 0 18px;
+    padding-bottom: 10px;
+    border-bottom: 3px solid var(--primary);
+    page-break-after: avoid;
+  }
+
+  h2 {
+    font-family: 'Merriweather', Georgia, serif;
+    font-size: 14pt;
+    font-weight: 700;
+    color: var(--primary-light);
+    margin: 26px 0 12px;
+    page-break-after: avoid;
+  }
+
+  h3 {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 12pt;
+    font-weight: 700;
+    color: var(--accent-dark);
+    margin: 18px 0 8px;
+    page-break-after: avoid;
+  }
+
+  /* ===== SECTION NUMBERING ===== */
+  .section-number {
+    display: inline-block;
+    background: var(--primary);
+    color: #fff;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 11pt;
+    font-weight: 700;
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
+    text-align: center;
+    border-radius: 50%;
+    margin-right: 10px;
+    vertical-align: middle;
+  }
+
+  /* ===== PARAGRAPHS ===== */
+  p {
+    margin-bottom: 10px;
+    text-align: justify;
+    orphans: 3;
+    widows: 3;
+  }
+
+  /* ===== TABLES ===== */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0 18px;
+    font-size: 10.5pt;
+    page-break-inside: avoid;
+  }
+
+  thead th {
+    background: var(--primary);
+    color: #fff;
+    font-weight: 600;
+    text-align: left;
+    padding: 9px 12px;
+    font-size: 10pt;
+    letter-spacing: 0.3px;
+  }
+
+  thead th:first-child { border-radius: 6px 0 0 0; }
+  thead th:last-child { border-radius: 0 6px 0 0; }
+
+  tbody td {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+
+  tbody tr:nth-child(even) {
+    background: var(--highlight-bg);
+  }
+
+  tbody tr:last-child td:first-child { border-radius: 0 0 0 6px; }
+  tbody tr:last-child td:last-child { border-radius: 0 0 6px 0; }
+
+  /* ===== CODE BLOCKS ===== */
+  code {
+    font-family: 'Fira Code', 'Consolas', monospace;
+    font-size: 9.5pt;
+    background: var(--code-bg);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: var(--danger);
+  }
+
+  pre {
+    background: #1e293b;
+    color: #e2e8f0;
+    padding: 16px 20px;
+    border-radius: 8px;
+    font-family: 'Fira Code', 'Consolas', monospace;
+    font-size: 9pt;
+    line-height: 1.6;
+    overflow-x: auto;
+    margin: 12px 0 18px;
+    page-break-inside: avoid;
+    border-left: 4px solid var(--accent);
+  }
+
+  pre .keyword { color: #93c5fd; }
+  pre .string { color: #86efac; }
+  pre .comment { color: #94a3b8; font-style: italic; }
+  pre .number { color: #fcd34d; }
+  pre .type { color: #c4b5fd; }
+
+  /* ===== INFO BOXES ===== */
+  .info-box {
+    padding: 14px 18px;
+    border-radius: 8px;
+    margin: 14px 0;
+    font-size: 10.5pt;
+    page-break-inside: avoid;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .info-box .icon {
+    font-size: 16pt;
+    flex-shrink: 0;
+    margin-top: -2px;
+  }
+
+  .info-box.note {
+    background: #e8f4fd;
+    border-left: 4px solid #2196F3;
+    color: #1565C0;
+  }
+
+  .info-box.tip {
+    background: #e8f5e9;
+    border-left: 4px solid var(--success);
+    color: #1b5e20;
+  }
+
+  .info-box.warning {
+    background: #fff3e0;
+    border-left: 4px solid var(--warning);
+    color: #e65100;
+  }
+
+  /* ===== FEATURE CARDS ===== */
+  .feature-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin: 14px 0 18px;
+  }
+
+  .feature-card {
+    background: var(--highlight-bg);
+    border-radius: 10px;
+    padding: 16px 18px;
+    border: 1px solid var(--border);
+    page-break-inside: avoid;
+  }
+
+  .feature-card h4 {
+    font-size: 11pt;
+    color: var(--primary);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .feature-card p {
+    font-size: 10pt;
+    color: var(--text-secondary);
+    margin-bottom: 0;
+    text-align: left;
+  }
+
+  /* ===== DIAGRAM BOXES ===== */
+  .diagram-box {
+    background: var(--code-bg);
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    margin: 14px 0 18px;
+    font-family: 'Fira Code', 'Consolas', monospace;
+    font-size: 8.5pt;
+    line-height: 1.5;
+    white-space: pre;
+    overflow-x: auto;
+    page-break-inside: avoid;
+    text-align: center;
+  }
+
+  /* ===== FLOW DIAGRAMS ===== */
+  .flow-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 14px 0 18px;
+    page-break-inside: avoid;
+  }
+
+  .flow-box {
+    background: var(--primary);
+    color: #fff;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 9pt;
+    font-weight: 600;
+    text-align: center;
+    min-width: 100px;
+  }
+
+  .flow-box.alt {
+    background: var(--accent);
+  }
+
+  .flow-box.light {
+    background: var(--highlight-bg);
+    color: var(--primary);
+    border: 2px solid var(--primary);
+  }
+
+  .flow-arrow {
+    font-size: 16pt;
+    color: var(--primary);
+    font-weight: 700;
+  }
+
+  /* ===== BADGE ===== */
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 8.5pt;
+    font-weight: 700;
+    color: #fff;
+  }
+  .badge.green { background: var(--success); }
+  .badge.blue { background: var(--primary-light); }
+  .badge.orange { background: var(--warning); }
+  .badge.red { background: var(--danger); }
+  .badge.teal { background: var(--accent); }
+
+  /* ===== CHECK LIST ===== */
+  .check-list {
+    list-style: none;
+    margin: 10px 0 16px;
+  }
+
+  .check-list li {
+    padding: 5px 0;
+    padding-left: 28px;
+    position: relative;
+    font-size: 11pt;
+  }
+
+  .check-list li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: var(--success);
+    font-weight: 700;
+    font-size: 13pt;
+  }
+
+  /* ===== BULLET LIST ===== */
+  ul.styled-list {
+    margin: 8px 0 14px 20px;
+    list-style: none;
+  }
+
+  ul.styled-list li {
+    padding: 4px 0;
+    padding-left: 18px;
+    position: relative;
+  }
+
+  ul.styled-list li::before {
+    content: '▸';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  /* ===== FORMULA BOX ===== */
+  .formula-box {
+    background: linear-gradient(135deg, #f0f4ff, #e8f0fe);
+    border: 1px solid #c5d5f0;
+    border-radius: 10px;
+    padding: 18px 24px;
+    margin: 14px 0;
+    font-family: 'Fira Code', monospace;
+    font-size: 10pt;
+    line-height: 2;
+    page-break-inside: avoid;
+  }
+
+  /* ===== ASCII ART BOX ===== */
+  .ascii-box {
+    background: #1a1a2e;
+    color: #00e676;
+    padding: 16px 20px;
+    border-radius: 8px;
+    font-family: 'Fira Code', 'Consolas', monospace;
+    font-size: 8.5pt;
+    line-height: 1.45;
+    white-space: pre;
+    overflow-x: auto;
+    margin: 14px 0;
+    page-break-inside: avoid;
+  }
+
+  /* ===== FILE TREE ===== */
+  .file-tree {
+    background: #1e293b;
+    color: #e2e8f0;
+    padding: 16px 20px;
+    border-radius: 8px;
+    font-family: 'Fira Code', monospace;
+    font-size: 9pt;
+    line-height: 1.7;
+    margin: 14px 0;
+    page-break-inside: avoid;
+  }
+
+  .file-tree .folder { color: #60a5fa; }
+  .file-tree .java { color: #f59e0b; }
+  .file-tree .class { color: #a78bfa; }
+  .file-tree .html { color: #34d399; }
+  .file-tree .md { color: #f472b6; }
+
+  /* ===== COLOR SWATCH ===== */
+  .color-swatches {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    margin: 14px 0;
+  }
+
+  .swatch {
+    text-align: center;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    page-break-inside: avoid;
+  }
+
+  .swatch .color-block {
+    height: 36px;
+  }
+
+  .swatch .color-info {
+    padding: 6px;
+    font-size: 7.5pt;
+    background: #fff;
+  }
+
+  .swatch .color-info strong {
+    display: block;
+    font-size: 8pt;
+    color: var(--text);
+  }
+
+  /* ===== PAGE BREAKS ===== */
+  .page-break {
+    page-break-before: always;
+    padding-top: 10px;
+  }
+
+  /* ===== HEADER / FOOTER IN PRINT ===== */
+  @media print {
+    body { font-size: 11pt; }
+    .cover-page { min-height: 97vh; }
+    .no-print { display: none; }
+  }
+
+  /* ===== SECTION SEPARATOR ===== */
+  .section-sep {
+    border: none;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 28px 0 10px;
+  }
+</style>
+</head>
+<body>
+
+<!-- ==================== COVER PAGE ==================== -->
+<div class="cover-page">
+  <div class="cover-logo">🏨</div>
+  <div class="cover-hotel-name">GRAND LUXURY HOTEL &amp; RESORT</div>
+  <div class="cover-stars">★ ★ ★ ★ ★</div>
+  <hr class="cover-divider">
+  <div class="cover-title">Hotel Management System</div>
+  <div class="cover-subtitle">Project Report</div>
+
+  <table class="cover-meta-table">
+    <tr><td>Project Title</td><td>Grand Luxury Hotel &amp; Resort — Management System</td></tr>
+    <tr><td>Technology Stack</td><td>Java (Swing GUI), HTML5 &amp; CSS3</td></tr>
+    <tr><td>Platform</td><td>Cross-Platform Desktop Application (JRE 8+)</td></tr>
+    <tr><td>Application Type</td><td>Single-File Desktop Application with Web Export</td></tr>
+    <tr><td>Source File</td><td>HotelManagement.java (828 lines, ~39 KB)</td></tr>
+    <tr><td>Date</td><td>July 2026</td></tr>
+  </table>
+
+  <div class="cover-footer">Placement Project — Short Project Submission &nbsp;•&nbsp; July 2026</div>
+</div>
+
+<!-- ==================== TABLE OF CONTENTS ==================== -->
+<div class="toc-page">
+  <h2>Table of Contents</h2>
+  <ol class="toc-list">
+    <li><span class="toc-title">Abstract</span><span class="toc-page-num">3</span></li>
+    <li><span class="toc-title">Introduction</span><span class="toc-page-num">3</span></li>
+    <li><span class="toc-title">Problem Statement &amp; Objectives</span><span class="toc-page-num">4</span></li>
+    <li><span class="toc-title">System Requirements</span><span class="toc-page-num">4</span></li>
+    <li><span class="toc-title">System Architecture &amp; Design</span><span class="toc-page-num">5</span></li>
+    <li><span class="toc-title">Module Description</span><span class="toc-page-num">6</span></li>
+    <li><span class="toc-title">Implementation Details</span><span class="toc-page-num">7</span></li>
+    <li><span class="toc-title">User Interface Design</span><span class="toc-page-num">8</span></li>
+    <li><span class="toc-title">Code Walkthrough — Key Components</span><span class="toc-page-num">8</span></li>
+    <li><span class="toc-title">Data Flow Diagrams</span><span class="toc-page-num">9</span></li>
+    <li><span class="toc-title">Testing &amp; Validation</span><span class="toc-page-num">10</span></li>
+    <li><span class="toc-title">Advantages &amp; Limitations</span><span class="toc-page-num">11</span></li>
+    <li><span class="toc-title">Future Enhancements</span><span class="toc-page-num">11</span></li>
+    <li><span class="toc-title">Conclusion</span><span class="toc-page-num">12</span></li>
+    <li><span class="toc-title">References</span><span class="toc-page-num">12</span></li>
+  </ol>
+</div>
+
+<!-- ==================== SECTION 1: ABSTRACT ==================== -->
+<h1 class="section-title"><span class="section-number">1</span> Abstract</h1>
+
+<p>The <strong>Grand Luxury Hotel Management System</strong> is a single-file, self-contained Java desktop application that provides a comprehensive solution for hotel room booking, guest check-in/check-out management, billing and invoicing, and real-time dashboard analytics. Built using Java Swing with a premium custom-painted GUI, the application demonstrates object-oriented programming principles, event-driven architecture, and modern UI design patterns.</p>
+
+<p>The project also includes an HTML/CSS web portal component that can be auto-generated from within the application, serving as a presentation layer for academic submissions. The system supports both in-memory data persistence and an optional MongoDB connection hook, making it adaptable for both demonstration and production-like environments.</p>
+
+<div class="info-box note">
+  <span class="icon">📌</span>
+  <div><strong>Key Highlight:</strong> The entire application — GUI, business logic, data layer, and HTML export — is contained in a single Java file (828 lines), requiring zero external dependencies beyond the standard JDK.</div>
+</div>
+
+<hr class="section-sep">
+
+<!-- ==================== SECTION 2: INTRODUCTION ==================== -->
+<h1 class="section-title"><span class="section-number">2</span> Introduction</h1>
+
+<h2>2.1 Background</h2>
+<p>The hospitality industry relies heavily on efficient management systems to handle guest bookings, room allocation, billing, and record-keeping. Traditional manual methods are error-prone, time-consuming, and difficult to scale. A computerized hotel management system eliminates these challenges by automating routine tasks, improving accuracy, and providing real-time visibility into hotel operations.</p>
+
+<h2>2.2 Purpose of the Project</h2>
+<p>This project aims to develop a <strong>desktop-based Hotel Management System</strong> using core Java technologies. It serves as both a functional prototype of a real-world hotel management solution and an academic project demonstrating:</p>
+
+<div class="feature-grid">
+  <div class="feature-card">
+    <h4>🎨 Java Swing GUI</h4>
+    <p>Custom-painted components with gradients, rounded buttons, card layouts, and hover animations</p>
+  </div>
+  <div class="feature-card">
+    <h4>🧩 Object-Oriented Design</h4>
+    <p>Encapsulation, inner classes, data modeling, and separation of concerns</p>
+  </div>
+  <div class="feature-card">
+    <h4>⚡ Event-Driven Programming</h4>
+    <p>ActionListeners, MouseListeners, and dynamic user interaction handling</p>
+  </div>
+  <div class="feature-card">
+    <h4>🌐 HTML/CSS Integration</h4>
+    <p>Automatic responsive web page generation from within the Java application</p>
+  </div>
+</div>
+
+<h2>2.3 Scope</h2>
+<p>The application covers the core operational functions of a hotel front desk:</p>
+
+<table>
+  <thead>
+    <tr><th>Function</th><th>Description</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>Room Booking</strong></td><td>Register new guests with room type selection and price calculation</td></tr>
+    <tr><td><strong>Check-In / Check-Out</strong></td><td>Update guest status and generate tax invoices</td></tr>
+    <tr><td><strong>Records Management</strong></td><td>View all bookings in a sortable, styled table</td></tr>
+    <tr><td><strong>Dashboard Analytics</strong></td><td>Real-time statistics on bookings, occupancy, and revenue</td></tr>
+    <tr><td><strong>HTML Export</strong></td><td>Generate a web portal page for project presentation</td></tr>
+  </tbody>
+</table>
+
+<!-- ==================== SECTION 3 ==================== -->
+<div class="page-break"></div>
+<h1 class="section-title"><span class="section-number">3</span> Problem Statement &amp; Objectives</h1>
+
+<h2>3.1 Problem Statement</h2>
+<p>Hotels require an integrated system that handles room reservations, guest tracking, billing with tax computation, and operational analytics in a single, easy-to-use interface. Manual record-keeping leads to overbookings, billing errors, and lost revenue. There is a need for a lightweight, portable solution that does not require complex server infrastructure but can optionally connect to databases for persistent storage.</p>
+
+<h2>3.2 Objectives</h2>
+<ul class="styled-list">
+  <li><strong>Design and develop</strong> a user-friendly Java Swing GUI application for hotel management with a premium, modern look and feel.</li>
+  <li><strong>Implement</strong> core hotel operations: room booking, check-in, check-out, and invoice generation with GST tax computation.</li>
+  <li><strong>Create</strong> an interactive dashboard displaying real-time statistics (total bookings, current occupancy, total revenue).</li>
+  <li><strong>Build</strong> custom UI components (gradient panels, rounded buttons, card panels, styled text fields) for a professional appearance.</li>
+  <li><strong>Integrate</strong> automatic HTML/CSS web page generation for project presentation and academic submission.</li>
+  <li><strong>Provide</strong> dual-mode data storage — in-memory <code>ArrayList</code> for immediate use and MongoDB driver detection for database connectivity.</li>
+  <li><strong>Demonstrate</strong> clean OOP design with inner classes, encapsulated data models, and separation of concerns.</li>
+</ul>
+
+<hr class="section-sep">
+
+<!-- ==================== SECTION 4 ==================== -->
+<h1 class="section-title"><span class="section-number">4</span> System Requirements</h1>
+
+<h2>4.1 Hardware Requirements</h2>
+<table>
+  <thead><tr><th>Component</th><th>Minimum Specification</th></tr></thead>
+  <tbody>
+    <tr><td>Processor</td><td>Intel Core i3 / AMD equivalent or higher</td></tr>
+    <tr><td>RAM</td><td>2 GB (4 GB recommended)</td></tr>
+    <tr><td>Storage</td><td>50 MB free disk space</td></tr>
+    <tr><td>Display</td><td>1024 × 768 resolution or higher</td></tr>
+    <tr><td>Input Devices</td><td>Keyboard and Mouse</td></tr>
+  </tbody>
+</table>
+
+<h2>4.2 Software Requirements</h2>
+<table>
+  <thead><tr><th>Software</th><th>Version / Details</th></tr></thead>
+  <tbody>
+    <tr><td>Operating System</td><td>Windows 10/11, macOS, or Linux</td></tr>
+    <tr><td>Java Development Kit (JDK)</td><td>JDK 8 or higher</td></tr>
+    <tr><td>Java Runtime Environment</td><td>JRE 8 or higher</td></tr>
+    <tr><td>Web Browser</td><td>Any modern browser (for HTML portal)</td></tr>
+    <tr><td>IDE (Optional)</td><td>IntelliJ IDEA, Eclipse, VS Code, or NetBeans</td></tr>
+    <tr><td>Database (Optional)</td><td>MongoDB 4.0+ with Java Driver</td></tr>
+  </tbody>
+</table>
+
+<h2>4.3 Software Dependencies</h2>
+<p>The project is designed as a <strong>zero-dependency</strong> application using only the Java Standard Library:</p>
+
+<table>
+  <thead><tr><th>Package</th><th>Purpose</th></tr></thead>
+  <tbody>
+    <tr><td><code>javax.swing.*</code></td><td>GUI framework — JFrame, JPanel, JTable, JButton, etc.</td></tr>
+    <tr><td><code>java.awt.*</code></td><td>Graphics, layout managers, event handling, 2D painting</td></tr>
+    <tr><td><code>java.io.*</code></td><td>File I/O for HTML generation</td></tr>
+    <tr><td><code>java.time.*</code></td><td>Date formatting with LocalDate and DateTimeFormatter</td></tr>
+    <tr><td><code>java.util.*</code></td><td>Collections (ArrayList, List)</td></tr>
+  </tbody>
+</table>
+
+<div class="info-box note">
+  <span class="icon">💡</span>
+  <div>No external JARs or build tools (Maven/Gradle) are required. The project compiles with a single <code>javac</code> command.</div>
+</div>
+
+<!-- ==================== SECTION 5 ==================== -->
+<div class="page-break"></div>
+<h1 class="section-title"><span class="section-number">5</span> System Architecture &amp; Design</h1>
+
+<h2>5.1 Architectural Overview</h2>
+<p>The application follows a <strong>single-file, monolithic architecture</strong> with clear internal separation of concerns across four logical layers:</p>
+
+<div class="flow-container">
+  <div class="flow-box">UI Layer<br><small>Custom Swing</small></div>
+  <span class="flow-arrow">⟷</span>
+  <div class="flow-box alt">Business Logic<br><small>Booking &amp; Billing</small></div>
+  <span class="flow-arrow">⟷</span>
+  <div class="flow-box">Data Layer<br><small>ArrayList + MongoDB</small></div>
+  <span class="flow-arrow">⟷</span>
+  <div class="flow-box alt">Export Layer<br><small>HTML Generation</small></div>
+</div>
+
+<h2>5.2 Design Principles Applied</h2>
+<table>
+  <thead><tr><th>Principle</th><th>Application in Project</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Encapsulation</strong></td><td><code>Booking</code> inner class with private fields and public getters/setters</td></tr>
+    <tr><td><strong>Single Responsibility</strong></td><td>Each inner class handles one concern (e.g., <code>GradientPanel</code> only paints gradients)</td></tr>
+    <tr><td><strong>Event-Driven Design</strong></td><td>All user interactions handled through ActionListeners and MouseListeners</td></tr>
+    <tr><td><strong>Custom Rendering</strong></td><td><code>paintComponent()</code> overrides for all custom UI components</td></tr>
+    <tr><td><strong>Separation of Concerns</strong></td><td>UI creation methods separated from business logic methods</td></tr>
+  </tbody>
+</table>
+
+<h2>5.3 Class Hierarchy</h2>
+<div class="diagram-box" style="text-align: left; font-size: 9pt;">
+HotelManagement  <span style="color:#60a5fa">(extends JFrame)</span>
+│
+├── <span style="color:#fcd34d">Booking</span>           ─ static inner class  ─  Data Model
+├── <span style="color:#60a5fa">GradientPanel</span>     ─ static inner class  ─  extends JPanel
+├── <span style="color:#60a5fa">RoundedButton</span>     ─ static inner class  ─  extends JButton
+│   └── Anonymous      ─ MouseAdapter (hover/press states)
+├── <span style="color:#60a5fa">CardPanel</span>         ─ static inner class  ─  extends JPanel
+├── <span style="color:#60a5fa">StyledTextField</span>   ─ static inner class  ─  extends JTextField
+├── Anonymous Classes  ─ ActionListeners, TableCellRenderers
+└── Static Helpers     ─ createBadge(), createStatCard()
+</div>
+
+<!-- ==================== SECTION 6 ==================== -->
+<div class="page-break"></div>
+<h1 class="section-title"><span class="section-number">6</span> Module Description</h1>
+
+<p>The application is organized into <strong>four main functional modules</strong>, each represented as a tab in the user interface:</p>
+
+<h2>6.1 Module 1 — Room Booking</h2>
+<p><strong>Purpose:</strong> Allows the front desk operator to create new guest reservations.</p>
+
+<div class="feature-grid">
+  <div class="feature-card">
+    <h4>📝 Guest Form</h4>
+    <p>Full Name, Phone Number, Room Category dropdown, Stay Duration input</p>
+  </div>
+  <div class="feature-card">
+    <h4>💰 Price Calculation</h4>
+    <p>Real-time total estimate based on room type × number of days</p>
+  </div>
+  <div class="feature-card">
+    <h4>🔢 Auto-Generation</h4>
+    <p>Unique Booking ID (from 1001), Room Number, Date stamp</p>
+  </div>
+  <div class="feature-card">
+    <h4>✅ Input Validation</h4>
+    <p>Empty check, numeric validation, positive integer enforcement</p>
+  </div>
+</div>
+
+<table>
+  <thead><tr><th>Room Category</th><th>Rate / Night (₹)</th><th>Amenities Included</th></tr></thead>
+  <tbody>
+    <tr><td><span class="badge blue">Standard</span></td><td>₹1,500</td><td>Wi-Fi, TV, AC, Work Desk</td></tr>
+    <tr><td><span class="badge green">Deluxe</span></td><td>₹2,800</td><td>Balcony View, King Bed, Complimentary Breakfast</td></tr>
+    <tr><td><span class="badge orange">Executive Suite</span></td><td>₹5,000</td><td>Jacuzzi, Living Area, 24/7 Personal Butler</td></tr>
+  </tbody>
+</table>
+
+<h2>6.2 Module 2 — Check-In / Check-Out &amp; Billing</h2>
+<p><strong>Purpose:</strong> Manages guest status transitions and generates detailed invoices.</p>
+<ul class="styled-list">
+  <li>Booking search by ID with instant invoice preview</li>
+  <li>Status update to <span class="badge teal">Checked-In</span> or <span class="badge red">Checked-Out</span></li>
+  <li>Detailed ASCII-art invoice with room charges, GST (12%), Service Charge (5%), and Grand Total</li>
+  <li>Invoice rendered in monospaced font (Consolas) for precise alignment</li>
+</ul>
+
+<h3>Billing Formula</h3>
+<div class="formula-box">
+  Subtotal &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= Room Rate × Number of Days<br>
+  GST (12%) &nbsp;&nbsp;&nbsp;= Subtotal × 0.12<br>
+  Service (5%) = Subtotal × 0.05<br>
+  <strong>Grand Total &nbsp;= Subtotal + GST + Service Charge</strong>
+</div>
+
+<h2>6.3 Module 3 — All Booking Records</h2>
+<p><strong>Purpose:</strong> Displays a comprehensive table of all bookings with 9 columns.</p>
+<ul class="styled-list">
+  <li>Columns: ID, Guest Name, Phone, Room Type, Room #, Days, Total (₹), Date, Status</li>
+  <li>Custom <code>DefaultTableCellRenderer</code> for alternating row colors</li>
+  <li>Color-coded status: <span class="badge blue">Booked</span> &nbsp; <span class="badge green">Checked-In</span> &nbsp; <span class="badge red">Checked-Out</span></li>
+  <li>Non-editable cells, styled header with primary color background</li>
+</ul>
+
+<h2>6.4 Module 4 — Dashboard</h2>
+<p><strong>Purpose:</strong> Provides at-a-glance operational analytics and system configuration.</p>
+<ul class="styled-list">
+  <li><strong>Total Bookings</strong> — Count of all reservations</li>
+  <li><strong>Currently Checked-In</strong> — Active guests count</li>
+  <li><strong>Total Revenue</strong> — Sum of all booking values (₹)</li>
+  <li>System info: Java version, OS name, MongoDB connection status</li>
+  <li>HTML export button to generate and launch <code>hotel.html</code></li>
+</ul>
+
+<!-- ==================== SECTION 7 ==================== -->
+<div class="page-break"></div>
+<h1 class="section-title"><span class="section-number">7</span> Implementation Details</h1>
+
+<h2>7.1 Project File Structure</h2>
+<div class="file-tree">
+<span class="folder">Short_Project/</span>
+├── <span class="java">HotelManagement.java</span>          <span style="color:#94a3b8">── Main source (828 lines, ~39 KB)</span>
+├── <span class="class">HotelManagement.class</span>          <span style="color:#94a3b8">── Compiled main class</span>
+├── <span class="class">HotelManagement$Booking.class</span>  <span style="color:#94a3b8">── Data Model inner class</span>
+├── <span class="class">HotelManagement$GradientPanel.class</span>
+├── <span class="class">HotelManagement$RoundedButton.class</span>
+├── <span class="class">HotelManagement$RoundedButton$1.class</span>  <span style="color:#94a3b8">── MouseAdapter</span>
+├── <span class="class">HotelManagement$CardPanel.class</span>
+├── <span class="class">HotelManagement$StyledTextField.class</span>
+├── <span class="class">HotelManagement$1.class</span> … <span class="class">$4.class</span>  <span style="color:#94a3b8">── Anonymous listeners</span>
+├── <span class="html">hotel.html</span>                     <span style="color:#94a3b8">── Web portal (43 lines)</span>
+└── <span class="md">README.md</span>                      <span style="color:#94a3b8">── Documentation</span>
+</div>
+
+<h2>7.2 Compilation &amp; Execution</h2>
+<pre>
+<span class="comment"># Step 1: Compile the source file</span>
+<span class="keyword">javac</span> HotelManagement.java
+
+<span class="comment"># Step 2: Launch the desktop GUI application</span>
+<span class="keyword">java</span> HotelManagement
+
+<span class="comment"># Step 3: Open the web portal (auto-generated or manual)</span>
+<span class="comment"># Open hotel.html in any web browser</span>
+</pre>
+
+<h2>7.3 Design System — Color Palette</h2>
+<div class="color-swatches">
+  <div class="swatch"><div class="color-block" style="background:#1E3C72"></div><div class="color-info"><strong>PRIMARY</strong>#1E3C72</div></div>
+  <div class="swatch"><div class="color-block" style="background:#2A5298"></div><div class="color-info"><strong>PRIMARY_LIGHT</strong>#2A5298</div></div>
+  <div class="swatch"><div class="color-block" style="background:#009688"></div><div class="color-info"><strong>ACCENT</strong>#009688</div></div>
+  <div class="swatch"><div class="color-block" style="background:#2E7D32"></div><div class="color-info"><strong>SUCCESS</strong>#2E7D32</div></div>
+  <div class="swatch"><div class="color-block" style="background:#C62828"></div><div class="color-info"><strong>DANGER</strong>#C62828</div></div>
+  <div class="swatch"><div class="color-block" style="background:#F57C00"></div><div class="color-info"><strong>WARNING</strong>#F57C00</div></div>
+  <div class="swatch"><div class="color-block" style="background:#FFC107"></div><div class="color-info"><strong>GOLD</strong>#FFC107</div></div>
+  <div class="swatch"><div class="color-block" style="background:#00796B"></div><div class="color-info"><strong>ACCENT_DARK</strong>#00796B</div></div>
+  <div class="swatch"><div class="color-block" style="background:#F0F2F7"></div><div class="color-info"><strong>PANEL_BG</strong>#F0F2F7</div></div>
+  <div class="swatch"><div class="color-block" style="background:#212121"></div><div class="color-info"><strong>TEXT</strong>#212121</div></div>
+</div>
+
+<h2>7.4 Typography System</h2>
+<table>
+  <thead><tr><th>Constant</th><th>Font Family</th><th>Style</th><th>Size</th><th>Usage</th></tr></thead>
+  <tbody>
+    <tr><td><code>FONT_TITLE</code></td><td>Segoe UI</td><td>Bold</td><td>22pt</td><td>Section titles</td></tr>
+    <tr><td><code>FONT_SUBTITLE</code></td><td>Segoe UI</td><td>Plain</td><td>14pt</td><td>Subtitles, descriptions</td></tr>
+    <tr><td><code>FONT_LABEL</code></td><td>Segoe UI</td><td>Bold</td><td>13pt</td><td>Form labels</td></tr>
+    <tr><td><code>FONT_INPUT</code></td><td>Segoe UI</td><td>Plain</td><td>13pt</td><td>Text fields, dropdowns</td></tr>
+    <tr><td><code>FONT_BUTTON</code></td><td>Segoe UI</td><td>Bold</td><td>13pt</td><td>Button text</td></tr>
+    <tr><td><code>FONT_TABLE</code></td><td>Segoe UI</td><td>Plain</td><td>12pt</td><td>Table content</td></tr>
+    <tr><td><code>FONT_MONO</code></td><td>Consolas</td><td>Plain</td><td>13pt</td><td>Invoice display</td></tr>
+  </tbody>
+</table>
+
+<!-- ==================== SECTION 8 ==================== -->
+<div class="page-break"></div>
+<h1 class="section-title"><span class="section-number">8</span> User Interface Design</h1>
+
+<h2>8.1 Main Window Layout</h2>
+<p>The application window is sized at <strong>960 × 680 pixels</strong> (minimum 800 × 550) and uses a <code>BorderLayout</code>:</p>
+
+<div class="diagram-box" style="font-size: 8pt; text-align: left;">
+┌───────────────────────────────────────────────────────────────────────┐
+│ <span style="color:#60a5fa">NORTH — GradientPanel Header</span>                                        │
+│  Grand Luxury Hotel & Resort    Management System v2.0     ★★★★★    │
+├──────────────┬────────────────────────────────────────────────────────┤
+│              │                                                        │
+│  <span style="color:#fcd34d">Tab 1:</span>      │                                                        │
+│  Room        │    <span style="color:#86efac">[Active Tab Content Area]</span>                            │
+│  Booking     │                                                        │
+│──────────────│    Form fields, tables, cards, or dashboard            │
+│  <span style="color:#fcd34d">Tab 2:</span>      │    displayed based on selected tab                      │
+│  Check-In/   │                                                        │
+│  Out         │                                                        │
+│──────────────│                                                        │
+│  <span style="color:#fcd34d">Tab 3:</span>      │                                                        │
+│  All Records │   <span style="color:#60a5fa">CENTER — JTabbedPane (LEFT orientation)</span>               │
+│──────────────│                                                        │
+│  <span style="color:#fcd34d">Tab 4:</span>      │                                                        │
+│  Dashboard   │                                                        │
+│              │                                                        │
+└──────────────┴────────────────────────────────────────────────────────┘
+</div>
+
+<h2>8.2 Custom UI Components</h2>
+
+<div class="feature-grid">
+  <div class="feature-card">
+    <h4>🎨 GradientPanel</h4>
+    <p>JPanel with linear <code>GradientPaint</code> background. Uses <code>Graphics2D</code> with antialiasing. Paints diagonal gradient from PRIMARY to PRIMARY_LIGHT.</p>
+  </div>
+  <div class="feature-card">
+    <h4>🔘 RoundedButton</h4>
+    <p>JButton with 12px rounded corners via <code>RoundRectangle2D</code>. Three states: default, hover (brighter), pressed (darker). Shadow effect on hover.</p>
+  </div>
+  <div class="feature-card">
+    <h4>🃏 CardPanel</h4>
+    <p>JPanel with soft drop shadow (3px offset), white rounded rectangle background (16px radius), and consistent 18×20px internal padding.</p>
+  </div>
+  <div class="feature-card">
+    <h4>📝 StyledTextField</h4>
+    <p>JTextField with light background (#F8F9FC), rounded line border in soft blue-gray, and 6×10px internal padding for comfortable input.</p>
+  </div>
+</div>
+
+<hr class="section-sep">
+
+<!-- ==================== SECTION 9 ==================== -->
+<h1 class="section-title"><span class="section-number">9</span> Code Walkthrough — Key Components</h1>
+
+<h2>9.1 Data Model — Booking Class</h2>
+<pre>
+<span class="keyword">public static class</span> <span class="type">Booking</span> {
+    <span class="keyword">private static int</span> idCounter = <span class="number">1001</span>;       <span class="comment">// Auto-increment ID</span>
+    <span class="keyword">private int</span> bookingId;
+    <span class="keyword">private</span> <span class="type">String</span> guestName, phone, roomType, status;
+    <span class="keyword">private int</span> roomNumber, days;
+    <span class="keyword">private double</span> totalPrice;
+    <span class="keyword">private</span> <span class="type">String</span> bookingDate;
+
+    <span class="comment">// Constructor auto-assigns ID, sets status to "Booked",</span>
+    <span class="comment">// and records current date via LocalDate.now()</span>
+}
+</pre>
+
+<div class="info-box tip">
+  <span class="icon">💡</span>
+  <div><strong>Design Decision:</strong> The <code>idCounter</code> is a <code>static</code> field shared across all instances, ensuring unique sequential booking IDs starting from 1001. This eliminates the need for a database-generated sequence.</div>
+</div>
+
+<h2>9.2 Invoice Generation</h2>
+<p>The <code>generateBillText()</code> method produces a formatted ASCII-art invoice using Unicode box-drawing characters:</p>
+
+<div class="ascii-box">╔══════════════════════════════════════════════╗
+║         GRAND LUXURY HOTEL & RESORT         ║
+║              OFFICIAL INVOICE                ║
+╠══════════════════════════════════════════════╣
+║  Booking ID    : 1001                        ║
+║  Guest Name    : Rahul Sharma                ║
+║  Phone         : 9876543210                  ║
+║  Room Category : Deluxe                      ║
+║  Room Number   : #101                        ║
+║  Stay Duration : 2 Days                      ║
+╠══════════════════════════════════════════════╣
+║  Room Charges     :  ₹         5,600.00      ║
+║  GST (12%)        :  ₹           672.00      ║
+║  Service Charge   :  ₹           280.00      ║
+╠══════════════════════════════════════════════╣
+║  GRAND TOTAL      :  ₹         6,552.00      ║
+╚══════════════════════════════════════════════╝</div>
+
+<h2>9.3 MongoDB Integration Hook</h2>
+<pre>
+<span class="keyword">private void</span> checkMongoConnection() {
+    <span class="keyword">try</span> {
+        <span class="type">Class</span>.forName(<span class="string">"com.mongodb.client.MongoClients"</span>);
+        mongoAvailable = <span class="keyword">true</span>;    <span class="comment">// Display: CONNECTED</span>
+    } <span class="keyword">catch</span> (<span class="type">ClassNotFoundException</span> e) {
+        mongoAvailable = <span class="keyword">false</span>;   <span class="comment">// Display: IN-MEMORY MODE</span>
+    }
+}
+</pre>
+<p>The system uses <strong>reflection-based driver detection</strong> (<code>Class.forName</code>) to check if the MongoDB Java driver is available on the classpath without creating a hard compile-time dependency.</p>
+
+<!-- ==================== SECTION 10 ==================== -->
+<div class="page-break"></div>
+<h1 class="section-title"><span class="section-number">10</span> Data Flow Diagrams</h1>
+
+<h2>10.1 Booking Creation Flow</h2>
+<div class="flow-container">
+  <div class="flow-box light">User Input<br><small>Name, Phone,<br>Room, Days</small></div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-box">Validation<br><small>Empty check,<br>Number parse</small></div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-box alt">Calculate<br>Price<br><small>Rate × Days</small></div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-box">Create<br>Booking<br><small>Auto ID/Room</small></div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-box alt">Add to<br>ArrayList</div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-box">Refresh<br>Table &amp;<br>Dashboard</div>
+</div>
+
+<h2>10.2 Check-In / Check-Out Flow</h2>
+<div class="flow-container">
+  <div class="flow-box light">Enter<br>Booking ID</div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-box">findBooking()<br><small>Search List</small></div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-box alt">Display<br>Invoice<br><small>Bill Preview</small></div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-box">User<br>Action<br><small>Check-In/Out</small></div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-box alt">Update<br>Status</div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-box">Refresh<br>All Views</div>
+</div>
+
+<h2>10.3 HTML Export Flow</h2>
+<div class="flow-container">
+  <div class="flow-box light">Click<br>"Generate &amp;<br>Open HTML"</div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-box">getHtml<br>Content()<br><small>Build String</small></div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-box alt">FileWriter<br><small>Write to<br>hotel.html</small></div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-box">Desktop<br>.open()<br><small>Launch Browser</small></div>
+</div>
+
+<h2>10.4 Class Relationship Summary</h2>
+
+<table>
+  <thead><tr><th>Class</th><th>Extends</th><th>Role</th><th>Key Methods</th></tr></thead>
+  <tbody>
+    <tr><td><code>HotelManagement</code></td><td>JFrame</td><td>Main application frame</td><td>main(), handleBooking(), calculatePrice()</td></tr>
+    <tr><td><code>Booking</code></td><td>—</td><td>Data model (POJO)</td><td>Getters, setters, auto-ID</td></tr>
+    <tr><td><code>GradientPanel</code></td><td>JPanel</td><td>Gradient-painted header</td><td>paintComponent()</td></tr>
+    <tr><td><code>RoundedButton</code></td><td>JButton</td><td>Styled button with hover</td><td>paintComponent(), MouseAdapter</td></tr>
+    <tr><td><code>CardPanel</code></td><td>JPanel</td><td>Card with shadow</td><td>paintComponent()</td></tr>
+    <tr><td><code>StyledTextField</code></td><td>JTextField</td><td>Rounded input field</td><td>Constructor styling</td></tr>
+  </tbody>
+</table>
+
+<!-- ==================== SECTION 11 ==================== -->
+<div class="page-break"></div>
+<h1 class="section-title"><span class="section-number">11</span> Testing &amp; Validation</h1>
+
+<h2>11.1 Test Cases</h2>
+<table>
+  <thead><tr><th>#</th><th>Test Case</th><th>Input</th><th>Expected Output</th><th>Result</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td>Valid booking creation</td><td>Name: "John", Phone: "9876543210", Standard, 3 days</td><td>Booking ID 1003, Total ₹4,500</td><td><span class="badge green">Pass</span></td></tr>
+    <tr><td>2</td><td>Empty name validation</td><td>Name: "", Phone: "123"</td><td>Warning: "Provide Guest Name and Phone"</td><td><span class="badge green">Pass</span></td></tr>
+    <tr><td>3</td><td>Invalid days (text)</td><td>Days: "abc"</td><td>Error: "Enter a valid number of days"</td><td><span class="badge green">Pass</span></td></tr>
+    <tr><td>4</td><td>Zero days input</td><td>Days: "0"</td><td>Error: "Enter a valid number of days"</td><td><span class="badge green">Pass</span></td></tr>
+    <tr><td>5</td><td>Negative days</td><td>Days: "-2"</td><td>Error: "Enter a valid number of days"</td><td><span class="badge green">Pass</span></td></tr>
+    <tr><td>6</td><td>Price — Standard</td><td>Standard, 5 days</td><td>₹7,500.00</td><td><span class="badge green">Pass</span></td></tr>
+    <tr><td>7</td><td>Price — Deluxe</td><td>Deluxe, 2 days</td><td>₹5,600.00</td><td><span class="badge green">Pass</span></td></tr>
+    <tr><td>8</td><td>Price — Executive</td><td>Executive Suite, 1 day</td><td>₹5,000.00</td><td><span class="badge green">Pass</span></td></tr>
+    <tr><td>9</td><td>Search — valid ID</td><td>ID: 1001</td><td>Invoice for "Rahul Sharma"</td><td><span class="badge green">Pass</span></td></tr>
+    <tr><td>10</td><td>Search — invalid ID</td><td>ID: 9999</td><td>Error: "Booking ID not found!"</td><td><span class="badge green">Pass</span></td></tr>
+    <tr><td>11</td><td>Check-In update</td><td>ID: 1001 → Mark Checked-In</td><td>Status = "Checked-In", table refreshes</td><td><span class="badge green">Pass</span></td></tr>
+    <tr><td>12</td><td>Check-Out &amp; invoice</td><td>ID: 1001 → Check-Out</td><td>Status = "Checked-Out", invoice generated</td><td><span class="badge green">Pass</span></td></tr>
+    <tr><td>13</td><td>Dashboard stats</td><td>After 2 sample bookings</td><td>Total: 2, Revenue: ₹20,600</td><td><span class="badge green">Pass</span></td></tr>
+    <tr><td>14</td><td>HTML generation</td><td>Click "Generate &amp; Open"</td><td>hotel.html created, opens in browser</td><td><span class="badge green">Pass</span></td></tr>
+    <tr><td>15</td><td>No MongoDB driver</td><td>No driver on classpath</td><td>Status: "IN-MEMORY MODE"</td><td><span class="badge green">Pass</span></td></tr>
+  </tbody>
+</table>
+
+<h2>11.2 Invoice Tax Calculation Verification</h2>
+<p><strong>Sample: Booking ID 1001</strong> — Deluxe Room, 2 Nights</p>
+<table>
+  <thead><tr><th>Component</th><th>Calculation</th><th>Amount (₹)</th></tr></thead>
+  <tbody>
+    <tr><td>Room Charges (Subtotal)</td><td>₹2,800 × 2</td><td>5,600.00</td></tr>
+    <tr><td>GST (12%)</td><td>₹5,600 × 0.12</td><td>672.00</td></tr>
+    <tr><td>Service Charge (5%)</td><td>₹5,600 × 0.05</td><td>280.00</td></tr>
+    <tr><td style="font-weight:700; color:#1E3C72">Grand Total</td><td></td><td style="font-weight:700; color:#1E3C72">6,552.00</td></tr>
+  </tbody>
+</table>
+
+<!-- ==================== SECTION 12 ==================== -->
+<hr class="section-sep">
+<h1 class="section-title"><span class="section-number">12</span> Advantages &amp; Limitations</h1>
+
+<h2>12.1 Advantages</h2>
+<ul class="check-list">
+  <li><strong>Zero Dependencies</strong> — Runs with just the standard JDK; no external libraries, build tools, or servers required.</li>
+  <li><strong>Single-File Architecture</strong> — The entire application (828 lines) is in one <code>.java</code> file, easy to distribute and submit.</li>
+  <li><strong>Premium UI Design</strong> — Custom-painted components with gradients, rounded corners, shadows, and hover animations.</li>
+  <li><strong>Dual Storage Mode</strong> — Seamlessly falls back to in-memory when MongoDB is unavailable.</li>
+  <li><strong>Cross-Platform</strong> — Runs on Windows, macOS, and Linux with any JRE 8+ installation.</li>
+  <li><strong>Auto HTML Export</strong> — Generates a responsive web portal from within the application.</li>
+  <li><strong>Real-Time Dashboard</strong> — Provides instant analytics without manual report generation.</li>
+  <li><strong>Professional Invoices</strong> — Formatted ASCII-art invoices with GST + service charge calculations.</li>
+</ul>
+
+<h2>12.2 Limitations</h2>
+<table>
+  <thead><tr><th>#</th><th>Limitation</th><th>Impact</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td>No persistent storage by default</td><td>In-memory data lost on application close</td></tr>
+    <tr><td>2</td><td>Single-user operation</td><td>No multi-user or network access support</td></tr>
+    <tr><td>3</td><td>No authentication system</td><td>No login or role-based access control</td></tr>
+    <tr><td>4</td><td>Fixed room pricing</td><td>Rates are hardcoded; no admin panel for dynamic pricing</td></tr>
+    <tr><td>5</td><td>No date-based availability</td><td>Room assignments are sequential; no conflict detection</td></tr>
+    <tr><td>6</td><td>Deprecated applet container</td><td>HTML applet tag non-functional in modern browsers</td></tr>
+  </tbody>
+</table>
+
+<!-- ==================== SECTION 13 ==================== -->
+<div class="page-break"></div>
+<h1 class="section-title"><span class="section-number">13</span> Future Enhancements</h1>
+
+<table>
+  <thead><tr><th>Enhancement</th><th>Description</th><th>Complexity</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Database Integration</strong></td><td>Full MongoDB / MySQL CRUD for persistent data storage</td><td><span class="badge orange">Medium</span></td></tr>
+    <tr><td><strong>User Authentication</strong></td><td>Login screen with admin/receptionist roles and password hashing</td><td><span class="badge orange">Medium</span></td></tr>
+    <tr><td><strong>Room Calendar</strong></td><td>Date-range booking with conflict detection and visual calendar</td><td><span class="badge red">High</span></td></tr>
+    <tr><td><strong>Email Notifications</strong></td><td>Send booking confirmation and invoices via SMTP</td><td><span class="badge orange">Medium</span></td></tr>
+    <tr><td><strong>PDF Invoice Export</strong></td><td>Generate downloadable PDF invoices using iText or PDFBox</td><td><span class="badge orange">Medium</span></td></tr>
+    <tr><td><strong>Search &amp; Filter</strong></td><td>Filter bookings by date range, status, room type, or guest name</td><td><span class="badge green">Low</span></td></tr>
+    <tr><td><strong>i18n Support</strong></td><td>Multi-language internationalization support</td><td><span class="badge orange">Medium</span></td></tr>
+    <tr><td><strong>REST API Layer</strong></td><td>Expose operations via Spring Boot REST endpoints</td><td><span class="badge red">High</span></td></tr>
+    <tr><td><strong>Mobile Portal</strong></td><td>Enhance HTML portal with Bootstrap for mobile responsiveness</td><td><span class="badge orange">Medium</span></td></tr>
+    <tr><td><strong>Report Charts</strong></td><td>Occupancy reports, revenue charts, and trend analysis</td><td><span class="badge orange">Medium</span></td></tr>
+  </tbody>
+</table>
+
+<hr class="section-sep">
+
+<!-- ==================== SECTION 14 ==================== -->
+<h1 class="section-title"><span class="section-number">14</span> Conclusion</h1>
+
+<p>The <strong>Grand Luxury Hotel Management System</strong> successfully demonstrates the development of a fully functional, visually polished desktop application using core Java technologies. The project achieves all stated objectives:</p>
+
+<ul class="check-list">
+  <li>A <strong>premium Swing GUI</strong> with custom-painted components, gradient effects, and card-based layouts</li>
+  <li>Complete <strong>room booking workflow</strong> with input validation and automatic ID generation</li>
+  <li><strong>Check-in/check-out management</strong> with detailed GST-inclusive invoice generation</li>
+  <li>An interactive <strong>records table</strong> with color-coded statuses and alternating row styling</li>
+  <li>A real-time <strong>analytics dashboard</strong> with key metrics (bookings, occupancy, revenue)</li>
+  <li>Automatic <strong>HTML/CSS web portal generation</strong> for academic presentation</li>
+  <li><strong>Dual-mode storage</strong> with graceful fallback from MongoDB to in-memory mode</li>
+</ul>
+
+<p>The single-file architecture (828 lines of Java) makes the project exceptionally portable and easy to evaluate, while the quality of the custom UI components demonstrates proficiency in Java 2D graphics, event-driven programming, and modern design principles. The project serves as a strong foundation that can be extended with database persistence, authentication, and REST APIs to become a production-ready hotel management solution.</p>
+
+<hr class="section-sep">
+
+<!-- ==================== SECTION 15 ==================== -->
+<h1 class="section-title"><span class="section-number">15</span> References</h1>
+
+<table>
+  <thead><tr><th>#</th><th>Reference</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td>Oracle Corporation. (2024). <em>Java Swing Tutorial.</em> https://docs.oracle.com/javase/tutorial/uiswing/</td></tr>
+    <tr><td>2</td><td>Oracle Corporation. (2024). <em>Java 2D Graphics API.</em> https://docs.oracle.com/javase/tutorial/2d/</td></tr>
+    <tr><td>3</td><td>Oracle Corporation. (2024). <em>java.time Package Documentation.</em> https://docs.oracle.com/javase/8/docs/api/java/time/</td></tr>
+    <tr><td>4</td><td>MongoDB Inc. (2024). <em>MongoDB Java Driver Documentation.</em> https://www.mongodb.com/docs/drivers/java/</td></tr>
+    <tr><td>5</td><td>Horstmann, C. S. (2019). <em>Core Java Volume I — Fundamentals</em> (11th Ed.). Pearson Education.</td></tr>
+    <tr><td>6</td><td>Deitel, P., &amp; Deitel, H. (2020). <em>Java: How to Program, Early Objects</em> (11th Ed.). Pearson.</td></tr>
+    <tr><td>7</td><td>Mozilla Developer Network. (2024). <em>HTML5 &amp; CSS3 Documentation.</em> https://developer.mozilla.org/</td></tr>
+    <tr><td>8</td><td>Government of India. (2017). <em>Goods and Services Tax (GST) Act.</em> CBIC.</td></tr>
+  </tbody>
+</table>
+
+<br><br>
+
+<div style="text-align:center; padding: 30px 0; border-top: 3px solid var(--primary); margin-top: 30px;">
+  <p style="font-size: 10pt; color: var(--text-muted); margin-bottom: 4px;">— End of Report —</p>
+  <p style="font-size: 9pt; color: var(--text-muted);">Grand Luxury Hotel Management System &nbsp;•&nbsp; Project Report &nbsp;•&nbsp; July 2026</p>
+</div>
+
+</body>
+</html>

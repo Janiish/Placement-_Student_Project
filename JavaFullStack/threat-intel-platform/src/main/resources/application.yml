@@ -1,0 +1,20 @@
+spring:
+  profiles:
+    active: local
+  application:
+    name: threat-intel-platform
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/threat_intel_db
+  ai:
+    google:
+      genai:
+        api-key: ${GEMINI_API_KEY:}
+        model: gemini-2.5-flash
+
+server:
+  port: 8080
+
+logging:
+  level:
+    org.springframework.ai: DEBUG
