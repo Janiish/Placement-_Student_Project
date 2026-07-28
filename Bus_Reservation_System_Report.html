@@ -1,0 +1,1273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Bus Reservation System – Project Report</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Source+Code+Pro:wght@400;500&family=Open+Sans:wght@400;600;700&display=swap');
+
+  /* ── Global Reset & Base ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 12pt; }
+  body {
+    font-family: 'Open Sans', Arial, sans-serif;
+    line-height: 1.65;
+    color: #1a1a1a;
+    background: #fff;
+    padding: 0;
+    margin: 0;
+  }
+
+  /* ── Print / Page Setup ── */
+  @page {
+    size: A4;
+    margin: 20mm 18mm 22mm 18mm;
+  }
+  @media print {
+    body { padding: 0; }
+    .page-break { page-break-before: always; }
+    .no-break { page-break-inside: avoid; }
+  }
+  @media screen {
+    body { max-width: 210mm; margin: 0 auto; padding: 15mm; background: #f5f5f5; }
+    .page { background: #fff; padding: 15mm; margin-bottom: 10mm; box-shadow: 0 2px 10px rgba(0,0,0,.12); }
+  }
+
+  /* ── Typography ── */
+  h1 { font-family: 'Merriweather', serif; font-size: 26pt; color: #1a237e; margin-bottom: 10px; }
+  h2 { font-family: 'Merriweather', serif; font-size: 16pt; color: #283593; border-bottom: 2.5px solid #3f51b5; padding-bottom: 5px; margin: 28px 0 14px; }
+  h3 { font-size: 13pt; color: #1a237e; margin: 18px 0 8px; }
+  h4 { font-size: 11pt; color: #37474f; margin: 12px 0 6px; }
+  p  { margin-bottom: 10px; text-align: justify; }
+  ul, ol { margin: 6px 0 12px 22px; }
+  li { margin-bottom: 4px; }
+
+  /* ── Cover Page ── */
+  .cover {
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    min-height: 100vh; text-align: center; position: relative;
+  }
+  .cover .decoration {
+    width: 120px; height: 6px; background: linear-gradient(90deg, #3f51b5, #7c4dff); border-radius: 3px; margin: 18px auto;
+  }
+  .cover h1 { font-size: 32pt; margin-bottom: 0; }
+  .cover .subtitle { font-size: 16pt; color: #5c6bc0; margin-top: 6px; font-weight: 600; }
+  .cover .meta { margin-top: 50px; font-size: 12pt; color: #555; line-height: 2; }
+  .cover .meta strong { color: #1a237e; }
+  .cover .logo-icon { font-size: 60pt; color: #3f51b5; margin-bottom: 10px; }
+  .cover .institution { margin-top: 60px; font-size: 11pt; color: #777; }
+
+  /* ── Table of Contents ── */
+  .toc a { text-decoration: none; color: #1a237e; display: block; padding: 5px 0; border-bottom: 1px dotted #ccc; }
+  .toc a:hover { color: #3f51b5; }
+  .toc .toc-ch { font-weight: 700; font-size: 11pt; padding-left: 0; margin-top: 4px; }
+  .toc .toc-sec { padding-left: 20px; font-size: 10pt; color: #444; }
+
+  /* ── Tables ── */
+  table { width: 100%; border-collapse: collapse; margin: 12px 0 16px; font-size: 10pt; }
+  th { background: #e8eaf6; color: #1a237e; font-weight: 700; text-align: left; padding: 8px 10px; border: 1px solid #c5cae9; }
+  td { padding: 7px 10px; border: 1px solid #e0e0e0; vertical-align: top; }
+  tr:nth-child(even) td { background: #fafafa; }
+  caption { font-weight: 700; font-size: 10pt; margin-bottom: 4px; text-align: left; color: #37474f; }
+
+  /* ── Code Blocks ── */
+  pre {
+    background: #263238; color: #cfd8dc; padding: 14px 16px; border-radius: 6px;
+    font-family: 'Source Code Pro', 'Consolas', monospace; font-size: 8.5pt;
+    line-height: 1.55; overflow-x: auto; margin: 10px 0 14px; white-space: pre-wrap; word-wrap: break-word;
+  }
+  code { font-family: 'Source Code Pro', 'Consolas', monospace; font-size: 9pt; background: #eceff1; padding: 1px 5px; border-radius: 3px; }
+  pre code { background: none; padding: 0; }
+
+  .keyword  { color: #c792ea; }
+  .type     { color: #82aaff; }
+  .string   { color: #c3e88d; }
+  .comment  { color: #546e7a; font-style: italic; }
+  .annotation { color: #ffcb6b; }
+
+  /* ── Figures ── */
+  .figure { text-align: center; margin: 16px 0; }
+  .figure img { max-width: 100%; border: 1px solid #e0e0e0; border-radius: 4px; }
+  .figure-caption { font-size: 9pt; color: #666; margin-top: 4px; font-style: italic; }
+
+  /* ── Info Boxes ── */
+  .info-box { background: #e8eaf6; border-left: 4px solid #3f51b5; padding: 10px 14px; margin: 12px 0; border-radius: 0 4px 4px 0; font-size: 10pt; }
+
+  /* ── Diagram Boxes ── */
+  .diagram-box {
+    background: #fafafa; border: 1px solid #e0e0e0; border-radius: 6px;
+    padding: 16px; margin: 14px 0; font-family: 'Source Code Pro', monospace;
+    font-size: 9pt; line-height: 1.6; white-space: pre; overflow-x: auto;
+  }
+
+  /* ── API Table ── */
+  .api-method { display: inline-block; padding: 2px 8px; border-radius: 3px; font-size: 8pt; font-weight: 700; color: #fff; }
+  .api-get { background: #43a047; }
+  .api-post { background: #fb8c00; }
+
+  /* ── Footer ── */
+  .page-footer { text-align: center; font-size: 8pt; color: #aaa; margin-top: 20px; border-top: 1px solid #eee; padding-top: 6px; }
+
+  /* ── Flow box ── */
+  .flow-container { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 8px; margin: 14px 0; }
+  .flow-box { background: #e8eaf6; border: 1px solid #c5cae9; border-radius: 6px; padding: 8px 14px; font-size: 9pt; font-weight: 600; color: #1a237e; text-align: center; }
+  .flow-arrow { font-size: 16pt; color: #3f51b5; }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════════════ -->
+<!--                        COVER PAGE                          -->
+<!-- ════════════════════════════════════════════════════════════ -->
+<div class="page cover">
+  <div class="logo-icon">🚌</div>
+  <h1>Bus Reservation System</h1>
+  <div class="decoration"></div>
+  <div class="subtitle">BusVoyager — Full-Stack Web Application</div>
+  <div class="meta">
+    <strong>Project Report</strong><br>
+    A Java Full-Stack Project using Spring Boot &amp; MongoDB<br><br>
+    <strong>Submitted By:</strong> Jannish<br>
+    <strong>Academic Year:</strong> 2025 – 2026<br>
+    <strong>Date:</strong> July 2026
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════ -->
+<!--                    TABLE OF CONTENTS                       -->
+<!-- ════════════════════════════════════════════════════════════ -->
+<div class="page page-break">
+  <h2>Table of Contents</h2>
+  <div class="toc">
+    <a class="toc-ch" href="#ch1">1. Introduction</a>
+    <a class="toc-sec" href="#ch1-1">1.1 Problem Statement</a>
+    <a class="toc-sec" href="#ch1-2">1.2 Objectives</a>
+    <a class="toc-sec" href="#ch1-3">1.3 Scope</a>
+
+    <a class="toc-ch" href="#ch2">2. Literature Review</a>
+
+    <a class="toc-ch" href="#ch3">3. System Requirements</a>
+    <a class="toc-sec" href="#ch3-1">3.1 Hardware Requirements</a>
+    <a class="toc-sec" href="#ch3-2">3.2 Software Requirements</a>
+    <a class="toc-sec" href="#ch3-3">3.3 Functional Requirements</a>
+    <a class="toc-sec" href="#ch3-4">3.4 Non-Functional Requirements</a>
+
+    <a class="toc-ch" href="#ch4">4. System Architecture &amp; Design</a>
+    <a class="toc-sec" href="#ch4-1">4.1 High-Level Architecture</a>
+    <a class="toc-sec" href="#ch4-2">4.2 Technology Stack</a>
+    <a class="toc-sec" href="#ch4-3">4.3 Project Structure</a>
+    <a class="toc-sec" href="#ch4-4">4.4 Database Design</a>
+    <a class="toc-sec" href="#ch4-5">4.5 REST API Design</a>
+
+    <a class="toc-ch" href="#ch5">5. Implementation</a>
+    <a class="toc-sec" href="#ch5-1">5.1 Backend — Entity Layer</a>
+    <a class="toc-sec" href="#ch5-2">5.2 Backend — Repository Layer</a>
+    <a class="toc-sec" href="#ch5-3">5.3 Backend — Service Layer</a>
+    <a class="toc-sec" href="#ch5-4">5.4 Backend — Controller Layer</a>
+    <a class="toc-sec" href="#ch5-5">5.5 Backend — DTOs</a>
+    <a class="toc-sec" href="#ch5-6">5.6 Backend — Configuration &amp; Exception Handling</a>
+    <a class="toc-sec" href="#ch5-7">5.7 Frontend — User Interface</a>
+
+    <a class="toc-ch" href="#ch6">6. User Interface Screenshots</a>
+
+    <a class="toc-ch" href="#ch7">7. Testing</a>
+
+    <a class="toc-ch" href="#ch8">8. Future Enhancements</a>
+
+    <a class="toc-ch" href="#ch9">9. Conclusion</a>
+
+    <a class="toc-ch" href="#ch10">10. References</a>
+
+    <a class="toc-ch" href="#appendix">Appendix — Complete Source Code</a>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════ -->
+<!--                    CHAPTER 1 – INTRODUCTION                -->
+<!-- ════════════════════════════════════════════════════════════ -->
+<div class="page page-break">
+  <h2 id="ch1">1. Introduction</h2>
+  <p>
+    The <strong>Bus Reservation System (BusVoyager)</strong> is a full-stack web application designed to simplify the process of searching for buses, selecting seats, and booking tickets online. The system replaces traditional manual ticket-booking counters with a modern, user-friendly digital interface backed by a robust REST API.
+  </p>
+  <p>
+    Built using <strong>Spring Boot 3.4</strong> on the backend and <strong>vanilla HTML/CSS/JavaScript</strong> with <strong>Tailwind CSS</strong> on the frontend, the application demonstrates enterprise-grade development practices including layered architecture, DTO pattern, global exception handling, and MongoDB as the persistence store.
+  </p>
+
+  <h3 id="ch1-1">1.1 Problem Statement</h3>
+  <p>
+    India's intercity bus network serves millions of passengers daily. However, many operators still rely on manual or fragmented systems for seat allocation, leading to:
+  </p>
+  <ul>
+    <li>Long queues and delayed departures at bus terminals.</li>
+    <li>Overbooking or under-utilisation of bus capacity.</li>
+    <li>Lack of real-time seat availability information for passengers.</li>
+    <li>No centralised record of bookings for auditing or analytics.</li>
+  </ul>
+  <p>
+    A digital reservation system addresses every one of these pain points while improving customer satisfaction and operational efficiency.
+  </p>
+
+  <h3 id="ch1-2">1.2 Objectives</h3>
+  <ol>
+    <li>Develop a RESTful backend API using <strong>Spring Boot</strong> and <strong>MongoDB</strong> to manage buses, routes, and bookings.</li>
+    <li>Create an intuitive, responsive frontend for passengers to search buses, view seat maps, and book tickets.</li>
+    <li>Implement real-time seat availability tracking with conflict detection to prevent double-booking.</li>
+    <li>Apply clean software engineering practices: layered architecture, DTO pattern, centralised error handling, and CORS configuration.</li>
+    <li>Provide seed data and a database schema for easy project setup and demonstration.</li>
+  </ol>
+
+  <h3 id="ch1-3">1.3 Scope</h3>
+  <p>The current version of the system covers:</p>
+  <ul>
+    <li>Bus search by origin, destination, and travel date.</li>
+    <li>Interactive seat selection with a visual 2+2 seat map.</li>
+    <li>Booking creation with passenger details and fare calculation.</li>
+    <li>Booking confirmation with a printable ticket.</li>
+    <li>City listing fetched dynamically from the database.</li>
+  </ul>
+  <p><strong>Out of scope (for this version):</strong> user authentication, payment gateway integration, admin panel, and cancellation/refund workflows.</p>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════ -->
+<!--               CHAPTER 2 – LITERATURE REVIEW                -->
+<!-- ════════════════════════════════════════════════════════════ -->
+<div class="page page-break">
+  <h2 id="ch2">2. Literature Review</h2>
+  <p>
+    Online reservation systems have been extensively studied in the fields of e-commerce, transportation, and enterprise application design. This chapter surveys the key technologies and architectural patterns adopted in this project.
+  </p>
+
+  <h3>2.1 Spring Boot &amp; REST API Design</h3>
+  <p>
+    Spring Boot, part of the Spring ecosystem, provides convention-over-configuration for building production-ready applications. Its embedded Tomcat server, auto-configuration, and starter dependencies drastically reduce boilerplate. RESTful API design—mapping HTTP verbs (GET, POST, PUT, DELETE) to CRUD operations—has become the de-facto standard for client-server communication in modern web development (Fielding, 2000).
+  </p>
+
+  <h3>2.2 NoSQL Databases — MongoDB</h3>
+  <p>
+    MongoDB is a document-oriented NoSQL database that stores data in flexible, JSON-like documents. For applications with rapidly evolving schemas or nested data (e.g., seat number arrays within bookings), MongoDB provides superior flexibility over rigid relational schemas. Spring Data MongoDB offers repository abstractions that eliminate hand-written CRUD queries (MongoDB Inc., 2024).
+  </p>
+
+  <h3>2.3 Frontend Technologies</h3>
+  <p>
+    Modern frontends leverage utility-first CSS frameworks such as <strong>Tailwind CSS</strong> for rapid UI development. Combined with the Fetch API for asynchronous HTTP calls, single-page experiences can be built without heavy framework overhead (React, Angular). The BusVoyager frontend adopts this lightweight approach while delivering a premium glassmorphism aesthetic.
+  </p>
+
+  <h3>2.4 Layered Architecture &amp; DTO Pattern</h3>
+  <p>
+    The three-tier architecture (Controller → Service → Repository) separates concerns, improves testability, and allows independent evolution of layers. Data Transfer Objects (DTOs) decouple the API contract from internal entity models, preventing unintended data exposure and offering flexibility for API versioning (Fowler, 2002).
+  </p>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════ -->
+<!--             CHAPTER 3 – SYSTEM REQUIREMENTS                -->
+<!-- ════════════════════════════════════════════════════════════ -->
+<div class="page page-break">
+  <h2 id="ch3">3. System Requirements</h2>
+
+  <h3 id="ch3-1">3.1 Hardware Requirements</h3>
+  <table>
+    <tr><th>Component</th><th>Minimum Specification</th></tr>
+    <tr><td>Processor</td><td>Intel Core i3 / AMD Ryzen 3 or above</td></tr>
+    <tr><td>RAM</td><td>4 GB (8 GB recommended)</td></tr>
+    <tr><td>Storage</td><td>500 MB free disk space</td></tr>
+    <tr><td>Network</td><td>Internet connectivity for dependency resolution</td></tr>
+  </table>
+
+  <h3 id="ch3-2">3.2 Software Requirements</h3>
+  <table>
+    <tr><th>Software</th><th>Version</th><th>Purpose</th></tr>
+    <tr><td>JDK</td><td>25</td><td>Java runtime &amp; compilation</td></tr>
+    <tr><td>Apache Maven</td><td>3.9+</td><td>Build &amp; dependency management</td></tr>
+    <tr><td>MongoDB</td><td>7.0+</td><td>NoSQL database</td></tr>
+    <tr><td>Spring Boot</td><td>3.4.1</td><td>Backend framework</td></tr>
+    <tr><td>Web Browser</td><td>Chrome / Edge / Firefox (latest)</td><td>Frontend rendering</td></tr>
+    <tr><td>IDE (optional)</td><td>IntelliJ IDEA / VS Code</td><td>Development environment</td></tr>
+  </table>
+
+  <h3 id="ch3-3">3.3 Functional Requirements</h3>
+  <table>
+    <tr><th>ID</th><th>Requirement</th><th>Priority</th></tr>
+    <tr><td>FR-01</td><td>Search buses by origin, destination, and date</td><td>High</td></tr>
+    <tr><td>FR-02</td><td>Display real-time seat availability for a bus</td><td>High</td></tr>
+    <tr><td>FR-03</td><td>Allow passengers to select up to 6 seats</td><td>High</td></tr>
+    <tr><td>FR-04</td><td>Create a booking with passenger details</td><td>High</td></tr>
+    <tr><td>FR-05</td><td>Display booking confirmation with ticket details</td><td>High</td></tr>
+    <tr><td>FR-06</td><td>Prevent double-booking of seats</td><td>High</td></tr>
+    <tr><td>FR-07</td><td>List all serviced cities dynamically</td><td>Medium</td></tr>
+    <tr><td>FR-08</td><td>Filter buses by operating days</td><td>Medium</td></tr>
+  </table>
+
+  <h3 id="ch3-4">3.4 Non-Functional Requirements</h3>
+  <table>
+    <tr><th>ID</th><th>Requirement</th></tr>
+    <tr><td>NFR-01</td><td>API response time ≤ 500 ms under normal load</td></tr>
+    <tr><td>NFR-02</td><td>Frontend pages load within 2 seconds on broadband</td></tr>
+    <tr><td>NFR-03</td><td>Responsive design supporting mobile, tablet, and desktop</td></tr>
+    <tr><td>NFR-04</td><td>Clean, layered code architecture for maintainability</td></tr>
+    <tr><td>NFR-05</td><td>Cross-Origin Resource Sharing (CORS) enabled for all origins</td></tr>
+  </table>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════ -->
+<!--         CHAPTER 4 – SYSTEM ARCHITECTURE & DESIGN           -->
+<!-- ════════════════════════════════════════════════════════════ -->
+<div class="page page-break">
+  <h2 id="ch4">4. System Architecture &amp; Design</h2>
+
+  <h3 id="ch4-1">4.1 High-Level Architecture</h3>
+  <p>The application follows a <strong>Client-Server</strong> model with a clear separation between the frontend (HTML/JS) and the backend (Spring Boot REST API). The backend itself is organised in a <strong>three-tier layered architecture</strong>.</p>
+
+  <div class="diagram-box">
+┌──────────────────────────────────────────────────────────────────┐
+│                        CLIENT (Browser)                          │
+│   ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────────┐   │
+│   │ index    │  │ results  │  │  seats   │  │ confirmation │   │
+│   │  .html   │  │  .html   │  │  .html   │  │    .html     │   │
+│   └────┬─────┘  └────┬─────┘  └────┬─────┘  └──────┬───────┘   │
+│        └──────────────┴──────────────┴───────────────┘           │
+│                   Fetch API (JSON over HTTP)                     │
+└─────────────────────────────┬────────────────────────────────────┘
+                              │  REST API calls
+┌─────────────────────────────▼────────────────────────────────────┐
+│                   SPRING BOOT SERVER (:8080)                     │
+│  ┌────────────────────────────────────────────────────────────┐  │
+│  │  Controller Layer   (BusController, BookingController)     │  │
+│  ├────────────────────────────────────────────────────────────┤  │
+│  │  Service Layer      (BusService, BookingService)           │  │
+│  ├────────────────────────────────────────────────────────────┤  │
+│  │  Repository Layer   (BusRepo, BookingRepo, RouteRepo, …)  │  │
+│  └────────────────────────────────────────────────────────────┘  │
+│  ┌────────────────┐  ┌──────────────────────────────────────┐   │
+│  │  Config Layer   │  │  Exception Handling (GlobalHandler)  │   │
+│  └────────────────┘  └──────────────────────────────────────┘   │
+└─────────────────────────────┬────────────────────────────────────┘
+                              │  Spring Data MongoDB
+┌─────────────────────────────▼────────────────────────────────────┐
+│                     MongoDB (bus_reservation)                    │
+│     Collections: buses, bookings, routes, users                  │
+└──────────────────────────────────────────────────────────────────┘
+  </div>
+
+  <h3 id="ch4-2">4.2 Technology Stack</h3>
+  <table>
+    <tr><th>Layer</th><th>Technology</th><th>Role</th></tr>
+    <tr><td>Frontend</td><td>HTML5, Tailwind CSS, JavaScript (ES6+)</td><td>User interface, DOM manipulation, API calls</td></tr>
+    <tr><td>Backend Framework</td><td>Spring Boot 3.4.1</td><td>REST API, dependency injection, auto-configuration</td></tr>
+    <tr><td>Data Access</td><td>Spring Data MongoDB</td><td>Repository abstraction over MongoDB</td></tr>
+    <tr><td>Database</td><td>MongoDB 7.0+</td><td>NoSQL document store</td></tr>
+    <tr><td>Build Tool</td><td>Apache Maven</td><td>Dependency management &amp; build lifecycle</td></tr>
+    <tr><td>Language</td><td>Java 25</td><td>Backend programming language</td></tr>
+    <tr><td>Utility Library</td><td>Lombok</td><td>Boilerplate reduction (getters, setters, constructors)</td></tr>
+    <tr><td>Validation</td><td>Spring Boot Starter Validation</td><td>Bean validation</td></tr>
+  </table>
+
+  <h3 id="ch4-3">4.3 Project Structure</h3>
+  <div class="diagram-box">
+Project/
+├── bus-reservation-backend/
+│   ├── pom.xml
+│   └── src/main/java/com/busreserve/
+│       ├── BusReservationApplication.java       ← Entry Point
+│       ├── config/
+│       │   └── CorsConfig.java                  ← CORS Configuration
+│       ├── controller/
+│       │   ├── BusController.java               ← Bus search &amp; cities API
+│       │   └── BookingController.java           ← Booking create &amp; fetch API
+│       ├── dto/
+│       │   ├── BookingRequest.java
+│       │   ├── BookingResponse.java
+│       │   ├── BusSearchResponse.java
+│       │   └── SeatAvailabilityResponse.java
+│       ├── entity/
+│       │   ├── Bus.java
+│       │   ├── Booking.java
+│       │   ├── Route.java
+│       │   └── User.java
+│       ├── exception/
+│       │   └── GlobalExceptionHandler.java
+│       ├── repository/
+│       │   ├── BusRepository.java
+│       │   ├── BookingRepository.java
+│       │   ├── RouteRepository.java
+│       │   └── UserRepository.java
+│       └── service/
+│           ├── BusService.java
+│           └── BookingService.java
+├── database/
+│   └── schema.sql                               ← Schema &amp; Seed Data
+└── frontend/
+    ├── index.html                               ← Home / Search Page
+    ├── results.html                             ← Search Results Page
+    ├── seats.html                               ← Seat Selection Page
+    └── confirmation.html                        ← Booking Confirmation
+  </div>
+</div>
+
+<!-- Database Design & API Design -->
+<div class="page page-break">
+  <h3 id="ch4-4">4.4 Database Design</h3>
+  <p>The application uses four MongoDB collections. The equivalent relational schema (provided in <code>schema.sql</code>) is shown below as an ER model reference:</p>
+
+  <h4>4.4.1 Entity-Relationship Diagram (Textual)</h4>
+  <div class="diagram-box">
+  ┌──────────┐        ┌──────────┐        ┌──────────┐
+  │  ROUTE   │        │   BUS    │        │ BOOKING  │
+  ├──────────┤   1:N  ├──────────┤   1:N  ├──────────┤
+  │ id (PK)  │◄───────│ id (PK)  │◄───────│ id (PK)  │
+  │ origin   │        │ bus_name │        │ pass_name│
+  │ dest.    │        │ bus_no   │        │ pass_mail│
+  │ distance │        │ bus_type │        │ pass_ph  │
+  └──────────┘        │ seats    │        │ bus (ref)│
+                      │ route(ref)│       │ travel_dt│
+       ┌──────────┐   │ dep_time │        │ seat_nos │
+       │  USER    │   │ arr_time │        │ total_$  │
+       ├──────────┤   │ fare     │        │ status   │
+       │ id (PK)  │   │ op_days  │        │ book_time│
+       │ name     │   └──────────┘        └──────────┘
+       │ email(U) │
+       │ phone    │
+       │ pwd_hash │
+       │ created  │
+       └──────────┘
+  </div>
+
+  <h4>4.4.2 Collection Descriptions</h4>
+  <table>
+    <tr><th>Collection</th><th>Key Fields</th><th>Description</th></tr>
+    <tr><td><code>routes</code></td><td>id, origin, destination, distance_km</td><td>Stores city-to-city routes with distance information</td></tr>
+    <tr><td><code>buses</code></td><td>id, bus_name, bus_number, bus_type, total_seats, route (DBRef), departure_time, arrival_time, fare, operating_days</td><td>Bus details linked to a route via document reference</td></tr>
+    <tr><td><code>bookings</code></td><td>id, passenger_name/email/phone, bus (DBRef), travel_date, seat_numbers (List), total_fare, status, booking_time</td><td>Individual bookings with seat list and fare</td></tr>
+    <tr><td><code>users</code></td><td>id, name, email (unique indexed), phone, password_hash, created_at</td><td>User accounts (reserved for future authentication)</td></tr>
+  </table>
+
+  <h4>4.4.3 Seed Data</h4>
+  <p>The <code>schema.sql</code> file provides seed data including:</p>
+  <ul>
+    <li><strong>3 users</strong> — Rahul Sharma, Priya Patel, Arjun Kumar</li>
+    <li><strong>8 routes</strong> — 4 bidirectional pairs: Delhi↔Mumbai, Bangalore↔Chennai, Hyderabad↔Pune, Jaipur↔Delhi</li>
+    <li><strong>12 buses</strong> — Across multiple routes with AC, Non-AC, Sleeper, and Semi-Sleeper types</li>
+    <li><strong>3 sample bookings</strong> — Pre-booked seats for demonstration</li>
+  </ul>
+
+  <h3 id="ch4-5">4.5 REST API Design</h3>
+  <table>
+    <tr><th>Method</th><th>Endpoint</th><th>Description</th><th>Request</th><th>Response</th></tr>
+    <tr>
+      <td><span class="api-method api-get">GET</span></td>
+      <td><code>/api/buses/search</code></td>
+      <td>Search buses by route &amp; date</td>
+      <td>Query: from, to, date</td>
+      <td>List&lt;BusSearchResponse&gt;</td>
+    </tr>
+    <tr>
+      <td><span class="api-method api-get">GET</span></td>
+      <td><code>/api/buses/{id}/seats</code></td>
+      <td>Get seat availability</td>
+      <td>Path: id, Query: date</td>
+      <td>SeatAvailabilityResponse</td>
+    </tr>
+    <tr>
+      <td><span class="api-method api-get">GET</span></td>
+      <td><code>/api/cities</code></td>
+      <td>List all serviced cities</td>
+      <td>—</td>
+      <td>List&lt;String&gt;</td>
+    </tr>
+    <tr>
+      <td><span class="api-method api-post">POST</span></td>
+      <td><code>/api/bookings</code></td>
+      <td>Create a new booking</td>
+      <td>Body: BookingRequest (JSON)</td>
+      <td>BookingResponse</td>
+    </tr>
+    <tr>
+      <td><span class="api-method api-get">GET</span></td>
+      <td><code>/api/bookings/{id}</code></td>
+      <td>Retrieve booking details</td>
+      <td>Path: id</td>
+      <td>BookingResponse</td>
+    </tr>
+  </table>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════ -->
+<!--                  CHAPTER 5 – IMPLEMENTATION                -->
+<!-- ════════════════════════════════════════════════════════════ -->
+<div class="page page-break">
+  <h2 id="ch5">5. Implementation</h2>
+  <p>This chapter walks through the key source code files, organised by architectural layer.</p>
+
+  <h3 id="ch5-1">5.1 Backend — Entity Layer</h3>
+  <p>Entities are MongoDB document models annotated with <code>@Document</code>. Lombok annotations eliminate boilerplate getters, setters, and constructors.</p>
+
+  <h4>5.1.1 Bus.java</h4>
+<pre><code><span class="annotation">@Document</span>(collection = "buses")
+<span class="annotation">@Data</span> <span class="annotation">@NoArgsConstructor</span> <span class="annotation">@AllArgsConstructor</span>
+<span class="keyword">public class</span> <span class="type">Bus</span> {
+    <span class="annotation">@Id</span>
+    <span class="keyword">private</span> String id;
+
+    <span class="annotation">@Field</span>("bus_name")
+    <span class="keyword">private</span> String busName;
+
+    <span class="annotation">@Field</span>("bus_number")
+    <span class="keyword">private</span> String busNumber;
+
+    <span class="annotation">@Field</span>("bus_type")
+    <span class="keyword">private</span> String busType;
+
+    <span class="annotation">@Field</span>("total_seats")
+    <span class="keyword">private</span> Integer totalSeats = 40;
+
+    <span class="annotation">@DBRef</span>
+    <span class="keyword">private</span> <span class="type">Route</span> route;
+
+    <span class="annotation">@Field</span>("departure_time")
+    <span class="keyword">private</span> LocalTime departureTime;
+
+    <span class="annotation">@Field</span>("arrival_time")
+    <span class="keyword">private</span> LocalTime arrivalTime;
+
+    <span class="keyword">private</span> BigDecimal fare;
+
+    <span class="annotation">@Field</span>("operating_days")
+    <span class="keyword">private</span> String operatingDays;
+}</code></pre>
+
+  <h4>5.1.2 Booking.java</h4>
+<pre><code><span class="annotation">@Document</span>(collection = "bookings")
+<span class="annotation">@Data</span> <span class="annotation">@NoArgsConstructor</span> <span class="annotation">@AllArgsConstructor</span>
+<span class="keyword">public class</span> <span class="type">Booking</span> {
+    <span class="annotation">@Id</span>
+    <span class="keyword">private</span> String id;
+
+    <span class="annotation">@Field</span>("passenger_name")   <span class="keyword">private</span> String passengerName;
+    <span class="annotation">@Field</span>("passenger_email")  <span class="keyword">private</span> String passengerEmail;
+    <span class="annotation">@Field</span>("passenger_phone")  <span class="keyword">private</span> String passengerPhone;
+
+    <span class="annotation">@DBRef</span>
+    <span class="keyword">private</span> <span class="type">Bus</span> bus;
+
+    <span class="annotation">@Field</span>("travel_date")      <span class="keyword">private</span> LocalDate travelDate;
+    <span class="annotation">@Field</span>("seat_numbers")     <span class="keyword">private</span> List&lt;Integer&gt; seatNumbers;
+    <span class="annotation">@Field</span>("total_fare")       <span class="keyword">private</span> BigDecimal totalFare;
+    <span class="keyword">private</span> String status = <span class="string">"CONFIRMED"</span>;
+    <span class="annotation">@Field</span>("booking_time")     <span class="keyword">private</span> LocalDateTime bookingTime = LocalDateTime.now();
+}</code></pre>
+
+  <h4>5.1.3 Route.java</h4>
+<pre><code><span class="annotation">@Document</span>(collection = "routes")
+<span class="annotation">@Data</span> <span class="annotation">@NoArgsConstructor</span> <span class="annotation">@AllArgsConstructor</span>
+<span class="keyword">public class</span> <span class="type">Route</span> {
+    <span class="annotation">@Id</span>
+    <span class="keyword">private</span> String id;
+    <span class="keyword">private</span> String origin;
+    <span class="keyword">private</span> String destination;
+    <span class="annotation">@Field</span>("distance_km")
+    <span class="keyword">private</span> Integer distanceKm;
+}</code></pre>
+
+  <h4>5.1.4 User.java</h4>
+<pre><code><span class="annotation">@Document</span>(collection = "users")
+<span class="annotation">@Data</span> <span class="annotation">@NoArgsConstructor</span> <span class="annotation">@AllArgsConstructor</span>
+<span class="keyword">public class</span> <span class="type">User</span> {
+    <span class="annotation">@Id</span>
+    <span class="keyword">private</span> String id;
+    <span class="keyword">private</span> String name;
+    <span class="annotation">@Indexed</span>(unique = <span class="keyword">true</span>)
+    <span class="keyword">private</span> String email;
+    <span class="keyword">private</span> String phone;
+    <span class="annotation">@Field</span>("password_hash")
+    <span class="keyword">private</span> String passwordHash;
+    <span class="annotation">@Field</span>("created_at")
+    <span class="keyword">private</span> LocalDateTime createdAt = LocalDateTime.now();
+}</code></pre>
+</div>
+
+<!-- Repository & Service Layer -->
+<div class="page page-break">
+  <h3 id="ch5-2">5.2 Backend — Repository Layer</h3>
+  <p>Spring Data MongoDB repositories provide zero-implementation CRUD and custom query methods through method name conventions.</p>
+
+  <h4>5.2.1 BusRepository.java</h4>
+<pre><code><span class="annotation">@Repository</span>
+<span class="keyword">public interface</span> <span class="type">BusRepository</span> <span class="keyword">extends</span> MongoRepository&lt;Bus, String&gt; {
+    List&lt;Bus&gt; findByRoute(Route route);
+}</code></pre>
+
+  <h4>5.2.2 BookingRepository.java</h4>
+<pre><code><span class="annotation">@Repository</span>
+<span class="keyword">public interface</span> <span class="type">BookingRepository</span> <span class="keyword">extends</span> MongoRepository&lt;Booking, String&gt; {
+    List&lt;Booking&gt; findByBusIdAndTravelDateAndStatus(
+        String busId, LocalDate travelDate, String status);
+}</code></pre>
+
+  <h4>5.2.3 RouteRepository.java</h4>
+<pre><code><span class="annotation">@Repository</span>
+<span class="keyword">public interface</span> <span class="type">RouteRepository</span> <span class="keyword">extends</span> MongoRepository&lt;Route, String&gt; {
+    List&lt;Route&gt; findByOriginIgnoreCaseAndDestinationIgnoreCase(
+        String origin, String destination);
+}</code></pre>
+
+  <h4>5.2.4 UserRepository.java</h4>
+<pre><code><span class="annotation">@Repository</span>
+<span class="keyword">public interface</span> <span class="type">UserRepository</span> <span class="keyword">extends</span> MongoRepository&lt;User, String&gt; {
+}</code></pre>
+
+  <h3 id="ch5-3">5.3 Backend — Service Layer</h3>
+  <p>Services encapsulate all business logic. They interact with repositories and return DTOs to controllers.</p>
+
+  <h4>5.3.1 BusService.java</h4>
+<pre><code><span class="annotation">@Service</span>
+<span class="annotation">@RequiredArgsConstructor</span>
+<span class="keyword">public class</span> <span class="type">BusService</span> {
+    <span class="keyword">private final</span> BusRepository busRepository;
+    <span class="keyword">private final</span> BookingRepository bookingRepository;
+    <span class="keyword">private final</span> RouteRepository routeRepository;
+
+    <span class="keyword">public</span> List&lt;BusSearchResponse&gt; searchBuses(String from, String to, String dateStr) {
+        LocalDate travelDate = LocalDate.parse(dateStr);
+        String day = travelDate.getDayOfWeek().name().substring(0, 3);
+
+        List&lt;Route&gt; routes = routeRepository
+            .findByOriginIgnoreCaseAndDestinationIgnoreCase(from, to);
+        <span class="keyword">if</span> (routes.isEmpty()) <span class="keyword">return</span> Collections.emptyList();
+
+        <span class="keyword">return</span> busRepository.findByRoute(routes.get(0)).stream()
+            .filter(bus -&gt; bus.getOperatingDays() != <span class="keyword">null</span>
+                        &amp;&amp; bus.getOperatingDays().contains(day))
+            .map(bus -&gt; {
+                <span class="keyword">int</span> booked = countBookedSeats(bus.getId(), travelDate);
+                <span class="keyword">return new</span> BusSearchResponse(bus.getId(), bus.getBusName(),
+                    bus.getBusNumber(), bus.getBusType(), bus.getTotalSeats(),
+                    bus.getDepartureTime(), bus.getArrivalTime(), bus.getFare(),
+                    bus.getRoute().getOrigin(), bus.getRoute().getDestination(),
+                    bus.getTotalSeats() - booked);
+            }).collect(Collectors.toList());
+    }
+
+    <span class="keyword">public</span> SeatAvailabilityResponse getSeatAvailability(String busId, String dateStr) {
+        LocalDate travelDate = LocalDate.parse(dateStr);
+        Bus bus = busRepository.findById(busId)
+            .orElseThrow(() -&gt; <span class="keyword">new</span> RuntimeException(<span class="string">"Bus not found"</span>));
+
+        List&lt;Integer&gt; bookedSeats = bookingRepository
+            .findByBusIdAndTravelDateAndStatus(busId, travelDate, <span class="string">"CONFIRMED"</span>)
+            .stream().filter(b -&gt; b.getSeatNumbers() != <span class="keyword">null</span>)
+            .flatMap(b -&gt; b.getSeatNumbers().stream())
+            .distinct().collect(Collectors.toList());
+
+        <span class="keyword">return new</span> SeatAvailabilityResponse(
+            bus.getId(), bus.getBusName(), bus.getTotalSeats(),
+            bookedSeats, bus.getFare());
+    }
+
+    <span class="keyword">public</span> List&lt;String&gt; getAllCities() {
+        <span class="keyword">return</span> routeRepository.findAll().stream()
+            .flatMap(r -&gt; List.of(r.getOrigin(), r.getDestination()).stream())
+            .distinct().sorted().collect(Collectors.toList());
+    }
+
+    <span class="keyword">private int</span> countBookedSeats(String busId, LocalDate date) {
+        <span class="keyword">return</span> bookingRepository
+            .findByBusIdAndTravelDateAndStatus(busId, date, <span class="string">"CONFIRMED"</span>)
+            .stream().filter(b -&gt; b.getSeatNumbers() != <span class="keyword">null</span>)
+            .mapToInt(b -&gt; b.getSeatNumbers().size()).sum();
+    }
+}</code></pre>
+</div>
+
+<!-- BookingService, Controllers, DTOs -->
+<div class="page page-break">
+  <h4>5.3.2 BookingService.java</h4>
+<pre><code><span class="annotation">@Service</span>
+<span class="annotation">@RequiredArgsConstructor</span>
+<span class="keyword">public class</span> <span class="type">BookingService</span> {
+    <span class="keyword">private final</span> BookingRepository bookingRepository;
+    <span class="keyword">private final</span> BusRepository busRepository;
+
+    <span class="annotation">@Transactional</span>
+    <span class="keyword">public</span> BookingResponse createBooking(BookingRequest request) {
+        Bus bus = busRepository.findById(request.getBusId())
+            .orElseThrow(() -&gt; <span class="keyword">new</span> RuntimeException(<span class="string">"Bus not found"</span>));
+
+        LocalDate travelDate = LocalDate.parse(request.getTravelDate());
+        Set&lt;Integer&gt; bookedSeats = getBookedSeatNumbers(bus.getId(), travelDate);
+
+        <span class="keyword">for</span> (Integer seatNo : request.getSeatNumbers()) {
+            <span class="keyword">if</span> (seatNo &lt; 1 || seatNo &gt; bus.getTotalSeats())
+                <span class="keyword">throw new</span> RuntimeException(<span class="string">"Invalid seat number: "</span> + seatNo);
+            <span class="keyword">if</span> (bookedSeats.contains(seatNo))
+                <span class="keyword">throw new</span> RuntimeException(<span class="string">"Seat already booked: "</span> + seatNo);
+        }
+
+        Booking booking = <span class="keyword">new</span> Booking();
+        booking.setPassengerName(request.getPassengerName());
+        booking.setPassengerEmail(request.getPassengerEmail());
+        booking.setPassengerPhone(request.getPassengerPhone());
+        booking.setBus(bus);
+        booking.setTravelDate(travelDate);
+        booking.setTotalFare(bus.getFare()
+            .multiply(BigDecimal.valueOf(request.getSeatNumbers().size())));
+        booking.setSeatNumbers(request.getSeatNumbers());
+        booking.setStatus(<span class="string">"CONFIRMED"</span>);
+        booking.setBookingTime(LocalDateTime.now());
+
+        <span class="keyword">return</span> mapToResponse(bookingRepository.save(booking));
+    }
+
+    <span class="keyword">public</span> BookingResponse getBooking(String id) {
+        <span class="keyword">return</span> mapToResponse(bookingRepository.findById(id)
+            .orElseThrow(() -&gt; <span class="keyword">new</span> RuntimeException(<span class="string">"Booking not found"</span>)));
+    }
+
+    <span class="keyword">private</span> Set&lt;Integer&gt; getBookedSeatNumbers(String busId, LocalDate date) {
+        <span class="keyword">return</span> bookingRepository
+            .findByBusIdAndTravelDateAndStatus(busId, date, <span class="string">"CONFIRMED"</span>)
+            .stream().filter(b -&gt; b.getSeatNumbers() != <span class="keyword">null</span>)
+            .flatMap(b -&gt; b.getSeatNumbers().stream())
+            .collect(Collectors.toSet());
+    }
+
+    <span class="keyword">private</span> BookingResponse mapToResponse(Booking b) {
+        <span class="keyword">return new</span> BookingResponse(b.getId(), b.getPassengerName(),
+            b.getPassengerEmail(), b.getPassengerPhone(),
+            b.getBus().getBusName(), b.getBus().getBusNumber(),
+            b.getBus().getRoute().getOrigin(),
+            b.getBus().getRoute().getDestination(),
+            b.getTravelDate(), b.getSeatNumbers(),
+            b.getTotalFare(), b.getStatus(), b.getBookingTime());
+    }
+}</code></pre>
+
+  <h3 id="ch5-4">5.4 Backend — Controller Layer</h3>
+
+  <h4>5.4.1 BusController.java</h4>
+<pre><code><span class="annotation">@RestController</span>
+<span class="annotation">@RequestMapping</span>(<span class="string">"/api"</span>)
+<span class="annotation">@RequiredArgsConstructor</span>
+<span class="keyword">public class</span> <span class="type">BusController</span> {
+    <span class="keyword">private final</span> BusService busService;
+
+    <span class="annotation">@GetMapping</span>(<span class="string">"/buses/search"</span>)
+    <span class="keyword">public</span> ResponseEntity&lt;List&lt;BusSearchResponse&gt;&gt; searchBuses(
+            <span class="annotation">@RequestParam</span>(<span class="string">"from"</span>) String from,
+            <span class="annotation">@RequestParam</span>(<span class="string">"to"</span>) String to,
+            <span class="annotation">@RequestParam</span>(<span class="string">"date"</span>) String date) {
+        <span class="keyword">return</span> ResponseEntity.ok(busService.searchBuses(from, to, date));
+    }
+
+    <span class="annotation">@GetMapping</span>(<span class="string">"/buses/{id}/seats"</span>)
+    <span class="keyword">public</span> ResponseEntity&lt;SeatAvailabilityResponse&gt; getSeatAvailability(
+            <span class="annotation">@PathVariable</span>(<span class="string">"id"</span>) String id,
+            <span class="annotation">@RequestParam</span>(<span class="string">"date"</span>) String date) {
+        <span class="keyword">return</span> ResponseEntity.ok(busService.getSeatAvailability(id, date));
+    }
+
+    <span class="annotation">@GetMapping</span>(<span class="string">"/cities"</span>)
+    <span class="keyword">public</span> ResponseEntity&lt;List&lt;String&gt;&gt; getAllCities() {
+        <span class="keyword">return</span> ResponseEntity.ok(busService.getAllCities());
+    }
+}</code></pre>
+
+  <h4>5.4.2 BookingController.java</h4>
+<pre><code><span class="annotation">@RestController</span>
+<span class="annotation">@RequestMapping</span>(<span class="string">"/api/bookings"</span>)
+<span class="annotation">@RequiredArgsConstructor</span>
+<span class="keyword">public class</span> <span class="type">BookingController</span> {
+    <span class="keyword">private final</span> BookingService bookingService;
+
+    <span class="annotation">@PostMapping</span>
+    <span class="keyword">public</span> ResponseEntity&lt;BookingResponse&gt; createBooking(
+            <span class="annotation">@RequestBody</span> BookingRequest request) {
+        <span class="keyword">return</span> ResponseEntity.ok(bookingService.createBooking(request));
+    }
+
+    <span class="annotation">@GetMapping</span>(<span class="string">"/{id}"</span>)
+    <span class="keyword">public</span> ResponseEntity&lt;BookingResponse&gt; getBooking(
+            <span class="annotation">@PathVariable</span>(<span class="string">"id"</span>) String id) {
+        <span class="keyword">return</span> ResponseEntity.ok(bookingService.getBooking(id));
+    }
+}</code></pre>
+</div>
+
+<!-- DTOs, Config, Exception -->
+<div class="page page-break">
+  <h3 id="ch5-5">5.5 Backend — Data Transfer Objects (DTOs)</h3>
+  <p>DTOs define the API contract, ensuring internal entity structure is not exposed to clients.</p>
+
+  <h4>5.5.1 BookingRequest.java</h4>
+<pre><code><span class="annotation">@Data</span> <span class="annotation">@NoArgsConstructor</span> <span class="annotation">@AllArgsConstructor</span>
+<span class="keyword">public class</span> <span class="type">BookingRequest</span> {
+    <span class="keyword">private</span> String busId;
+    <span class="keyword">private</span> String travelDate;
+    <span class="keyword">private</span> List&lt;Integer&gt; seatNumbers;
+    <span class="keyword">private</span> String passengerName;
+    <span class="keyword">private</span> String passengerEmail;
+    <span class="keyword">private</span> String passengerPhone;
+}</code></pre>
+
+  <h4>5.5.2 BookingResponse.java</h4>
+<pre><code><span class="annotation">@Data</span> <span class="annotation">@NoArgsConstructor</span> <span class="annotation">@AllArgsConstructor</span>
+<span class="keyword">public class</span> <span class="type">BookingResponse</span> {
+    <span class="keyword">private</span> String bookingId;
+    <span class="keyword">private</span> String passengerName;
+    <span class="keyword">private</span> String passengerEmail;
+    <span class="keyword">private</span> String passengerPhone;
+    <span class="keyword">private</span> String busName;
+    <span class="keyword">private</span> String busNumber;
+    <span class="keyword">private</span> String origin;
+    <span class="keyword">private</span> String destination;
+    <span class="keyword">private</span> LocalDate travelDate;
+    <span class="keyword">private</span> List&lt;Integer&gt; seatNumbers;
+    <span class="keyword">private</span> BigDecimal totalFare;
+    <span class="keyword">private</span> String status;
+    <span class="keyword">private</span> LocalDateTime bookingTime;
+}</code></pre>
+
+  <h4>5.5.3 BusSearchResponse.java</h4>
+<pre><code><span class="annotation">@Data</span> <span class="annotation">@NoArgsConstructor</span> <span class="annotation">@AllArgsConstructor</span>
+<span class="keyword">public class</span> <span class="type">BusSearchResponse</span> {
+    <span class="keyword">private</span> String busId;
+    <span class="keyword">private</span> String busName;
+    <span class="keyword">private</span> String busNumber;
+    <span class="keyword">private</span> String busType;
+    <span class="keyword">private</span> Integer totalSeats;
+    <span class="keyword">private</span> LocalTime departureTime;
+    <span class="keyword">private</span> LocalTime arrivalTime;
+    <span class="keyword">private</span> BigDecimal fare;
+    <span class="keyword">private</span> String origin;
+    <span class="keyword">private</span> String destination;
+    <span class="keyword">private</span> Integer availableSeats;
+}</code></pre>
+
+  <h4>5.5.4 SeatAvailabilityResponse.java</h4>
+<pre><code><span class="annotation">@Data</span> <span class="annotation">@NoArgsConstructor</span> <span class="annotation">@AllArgsConstructor</span>
+<span class="keyword">public class</span> <span class="type">SeatAvailabilityResponse</span> {
+    <span class="keyword">private</span> String busId;
+    <span class="keyword">private</span> String busName;
+    <span class="keyword">private</span> Integer totalSeats;
+    <span class="keyword">private</span> List&lt;Integer&gt; bookedSeats;
+    <span class="keyword">private</span> BigDecimal fare;
+}</code></pre>
+
+  <h3 id="ch5-6">5.6 Backend — Configuration &amp; Exception Handling</h3>
+
+  <h4>5.6.1 CorsConfig.java</h4>
+  <p>Enables Cross-Origin Resource Sharing for all origins, allowing the frontend (served from a different port or file) to communicate with the backend.</p>
+<pre><code><span class="annotation">@Configuration</span>
+<span class="keyword">public class</span> <span class="type">CorsConfig</span> {
+    <span class="annotation">@Bean</span>
+    <span class="keyword">public</span> WebMvcConfigurer corsConfigurer() {
+        <span class="keyword">return new</span> WebMvcConfigurer() {
+            <span class="annotation">@Override</span>
+            <span class="keyword">public void</span> addCorsMappings(CorsRegistry registry) {
+                registry.addMapping(<span class="string">"/**"</span>)
+                    .allowedOrigins(<span class="string">"*"</span>)
+                    .allowedMethods(<span class="string">"*"</span>)
+                    .allowedHeaders(<span class="string">"*"</span>);
+            }
+        };
+    }
+}</code></pre>
+
+  <h4>5.6.2 GlobalExceptionHandler.java</h4>
+  <p>Centralised exception handling returns structured JSON error responses instead of stack traces.</p>
+<pre><code><span class="annotation">@RestControllerAdvice</span>
+<span class="keyword">public class</span> <span class="type">GlobalExceptionHandler</span> {
+
+    <span class="annotation">@ExceptionHandler</span>(RuntimeException.<span class="keyword">class</span>)
+    <span class="keyword">public</span> ResponseEntity&lt;Map&lt;String, String&gt;&gt; handleRuntimeException(
+            RuntimeException ex) {
+        <span class="keyword">return</span> ResponseEntity.badRequest()
+            .body(Map.of(<span class="string">"error"</span>, ex.getMessage()));
+    }
+
+    <span class="annotation">@ExceptionHandler</span>(Exception.<span class="keyword">class</span>)
+    <span class="keyword">public</span> ResponseEntity&lt;Map&lt;String, String&gt;&gt; handleException(Exception ex) {
+        <span class="keyword">return</span> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(Map.of(<span class="string">"error"</span>, <span class="string">"An unexpected error occurred: "</span>
+                + ex.getMessage()));
+    }
+}</code></pre>
+
+  <h4>5.6.3 application.properties</h4>
+<pre><code>spring.data.mongodb.uri=mongodb://localhost:27017/bus_reservation
+server.port=8080</code></pre>
+</div>
+
+<!-- Frontend -->
+<div class="page page-break">
+  <h3 id="ch5-7">5.7 Frontend — User Interface</h3>
+  <p>The frontend consists of four static HTML pages that communicate with the backend via the <strong>Fetch API</strong>. Each page features a premium glassmorphism dark-mode design using Tailwind CSS with animated background orbs.</p>
+
+  <h4>5.7.1 User Flow</h4>
+  <div class="flow-container">
+    <div class="flow-box">🏠 index.html<br><small>Search Form</small></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box">🔍 results.html<br><small>Bus Results</small></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box">💺 seats.html<br><small>Seat Selection</small></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box">✅ confirmation.html<br><small>Booking Ticket</small></div>
+  </div>
+
+  <h4>5.7.2 Page Descriptions</h4>
+  <table>
+    <tr><th>Page</th><th>Features</th></tr>
+    <tr>
+      <td><strong>index.html</strong> (Home)</td>
+      <td>
+        <ul>
+          <li>Hero section with "Travel Beyond Gravity" branding</li>
+          <li>Dynamic city dropdowns populated from <code>/api/cities</code></li>
+          <li>Date picker with auto-set to tomorrow</li>
+          <li>Popular routes section with quick-search cards</li>
+          <li>Stats bar (10,000+ Bookings, 500+ Buses, 50+ Cities)</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td><strong>results.html</strong> (Search Results)</td>
+      <td>
+        <ul>
+          <li>Route &amp; date header with "Modify Search" link</li>
+          <li>Loading skeleton animation</li>
+          <li>Bus cards showing name, type, number, departure/arrival times, fare, available seats</li>
+          <li>"View Seats" button linking to seat selection</li>
+          <li>Empty state with friendly message when no buses found</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td><strong>seats.html</strong> (Seat Selection)</td>
+      <td>
+        <ul>
+          <li>Interactive 2+2 seat grid with colour legend (Available / Booked / Selected)</li>
+          <li>Maximum 6 seats per booking with validation</li>
+          <li>Real-time booking summary panel (selected seats, total fare)</li>
+          <li>Passenger details form (name, email, phone)</li>
+          <li>Confirm Booking button with loading spinner</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td><strong>confirmation.html</strong> (Ticket)</td>
+      <td>
+        <ul>
+          <li>Animated success checkmark with pulse ring</li>
+          <li>Printable ticket card with booking ID, passenger info, route, bus, seats, fare</li>
+          <li>Print Ticket &amp; Book Another Trip buttons</li>
+          <li>Print-optimised CSS media query for clean printout</li>
+        </ul>
+      </td>
+    </tr>
+  </table>
+
+  <h4>5.7.3 Design Highlights</h4>
+  <ul>
+    <li><strong>Glassmorphism:</strong> Semi-transparent cards with <code>backdrop-blur</code> and subtle borders.</li>
+    <li><strong>Animated Orbs:</strong> Three floating gradient circles with CSS <code>@keyframes drift</code> animation.</li>
+    <li><strong>Gradient Accents:</strong> Blue-to-purple gradients on buttons, headings, and text for a premium feel.</li>
+    <li><strong>Responsive Design:</strong> Tailwind's grid utilities ensure mobile-first, responsive layouts.</li>
+    <li><strong>Graceful Fallback:</strong> If the backend is unavailable, each page renders with realistic demo data.</li>
+  </ul>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════ -->
+<!--                 CHAPTER 6 – UI SCREENSHOTS                 -->
+<!-- ════════════════════════════════════════════════════════════ -->
+<div class="page page-break">
+  <h2 id="ch6">6. User Interface Screenshots</h2>
+  <p>The following describes each page of the BusVoyager application as seen in a web browser.</p>
+
+  <h3>6.1 Home Page (index.html)</h3>
+  <div class="info-box">
+    <strong>Description:</strong> The landing page features a dark-mode design with animated floating gradient orbs in the background. At the centre is the hero text "Travel Beyond Gravity" in large bold typography with a blue-to-purple gradient. Below the hero is a frosted-glass search card with three fields: "From" city dropdown, "To" city dropdown, and a date picker, followed by a gradient "Search Transport" button. Below the search form is a "Popular Routes" section showing clickable route cards, and a statistics bar displaying "10,000+ Bookings", "500+ Buses", "50+ Cities".
+  </div>
+
+  <h3>6.2 Search Results Page (results.html)</h3>
+  <div class="info-box">
+    <strong>Description:</strong> This page shows a header bar with the selected route (e.g., "Delhi → Mumbai") and travel date. Below are bus result cards, each displaying the bus name, type badge (e.g., "AC"), bus number, departure and arrival times connected by a gradient line, fare in large bold text, available seats count in green, and a "View Seats" gradient button. If no buses are found, an empty state with a sad face icon and helpful text is shown.
+  </div>
+
+  <h3>6.3 Seat Selection Page (seats.html)</h3>
+  <div class="info-box">
+    <strong>Description:</strong> The page is divided into two sections. The left (main) section contains the bus name with fare-per-seat, a colour legend (Available=grey, Booked=red, Selected=blue-purple gradient), and an interactive seat grid in a 2+aisle+2 layout. Users click seats to select/deselect them. Below the seat map, a passenger details form appears when seats are selected, with fields for full name, email, and phone. The right sidebar is a sticky "Booking Summary" card showing selected seat count, individual seat badges, total fare, and a "Confirm Booking" button.
+  </div>
+
+  <h3>6.4 Booking Confirmation Page (confirmation.html)</h3>
+  <div class="info-box">
+    <strong>Description:</strong> A centred confirmation page with an animated green checkmark that pulses. The heading reads "Booking Confirmed!" in a green-to-blue gradient. Below is a ticket card showing: Booking ID (monospace font), CONFIRMED badge, passenger name and contact, journey route and date, bus name and number, seat number badges, and total amount paid. At the bottom are "Print Ticket" and "Book Another Trip" buttons.
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════ -->
+<!--                    CHAPTER 7 – TESTING                     -->
+<!-- ════════════════════════════════════════════════════════════ -->
+<div class="page page-break">
+  <h2 id="ch7">7. Testing</h2>
+  <p>The system was tested using a combination of API testing and manual UI testing.</p>
+
+  <h3>7.1 API Testing (Manual / cURL)</h3>
+  <table>
+    <tr><th>#</th><th>Test Case</th><th>Method &amp; Endpoint</th><th>Expected Result</th><th>Status</th></tr>
+    <tr><td>1</td><td>Search buses (valid route)</td><td>GET /api/buses/search?from=Delhi&amp;to=Mumbai&amp;date=2026-07-28</td><td>Returns list of buses with available seats</td><td>✅ Pass</td></tr>
+    <tr><td>2</td><td>Search buses (invalid route)</td><td>GET /api/buses/search?from=Delhi&amp;to=Kolkata&amp;date=2026-07-28</td><td>Returns empty list []</td><td>✅ Pass</td></tr>
+    <tr><td>3</td><td>Get seat availability</td><td>GET /api/buses/1/seats?date=2026-07-26</td><td>Returns booked seat numbers</td><td>✅ Pass</td></tr>
+    <tr><td>4</td><td>Get all cities</td><td>GET /api/cities</td><td>Returns sorted list of unique cities</td><td>✅ Pass</td></tr>
+    <tr><td>5</td><td>Create booking (valid)</td><td>POST /api/bookings</td><td>Returns BookingResponse with CONFIRMED status</td><td>✅ Pass</td></tr>
+    <tr><td>6</td><td>Create booking (duplicate seat)</td><td>POST /api/bookings (seat already booked)</td><td>Returns 400 with error message</td><td>✅ Pass</td></tr>
+    <tr><td>7</td><td>Create booking (invalid seat number)</td><td>POST /api/bookings (seat 45 on 40-seat bus)</td><td>Returns 400: "Invalid seat number: 45"</td><td>✅ Pass</td></tr>
+    <tr><td>8</td><td>Get booking by ID</td><td>GET /api/bookings/{id}</td><td>Returns full booking details</td><td>✅ Pass</td></tr>
+    <tr><td>9</td><td>Get booking (invalid ID)</td><td>GET /api/bookings/invalid123</td><td>Returns 400: "Booking not found"</td><td>✅ Pass</td></tr>
+    <tr><td>10</td><td>Bus not found</td><td>GET /api/buses/invalid/seats?date=2026-07-26</td><td>Returns 400: "Bus not found"</td><td>✅ Pass</td></tr>
+  </table>
+
+  <h3>7.2 Frontend Testing (Manual)</h3>
+  <table>
+    <tr><th>#</th><th>Test Case</th><th>Expected Behaviour</th><th>Status</th></tr>
+    <tr><td>1</td><td>City dropdowns load on page load</td><td>Both dropdowns populated with cities from API</td><td>✅ Pass</td></tr>
+    <tr><td>2</td><td>Search form validation</td><td>Cannot submit without selecting all three fields</td><td>✅ Pass</td></tr>
+    <tr><td>3</td><td>Seat selection — max 6 seats</td><td>Error message shown when trying to select 7th seat</td><td>✅ Pass</td></tr>
+    <tr><td>4</td><td>Booked seats are non-clickable</td><td>Red-tinted seats cannot be selected</td><td>✅ Pass</td></tr>
+    <tr><td>5</td><td>Fare calculation updates in real-time</td><td>Total fare = fare × number of selected seats</td><td>✅ Pass</td></tr>
+    <tr><td>6</td><td>Passenger form validation</td><td>"Please fill all passenger details" error if empty</td><td>✅ Pass</td></tr>
+    <tr><td>7</td><td>Booking confirmation displays ticket</td><td>All booking details rendered correctly</td><td>✅ Pass</td></tr>
+    <tr><td>8</td><td>Print ticket functionality</td><td>Browser print dialog opens with clean layout</td><td>✅ Pass</td></tr>
+    <tr><td>9</td><td>Responsive design (mobile)</td><td>All pages layout correctly on 375px width</td><td>✅ Pass</td></tr>
+    <tr><td>10</td><td>Fallback demo data when backend is down</td><td>Pages render with mock data gracefully</td><td>✅ Pass</td></tr>
+  </table>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════ -->
+<!--              CHAPTER 8 – FUTURE ENHANCEMENTS               -->
+<!-- ════════════════════════════════════════════════════════════ -->
+<div class="page page-break">
+  <h2 id="ch8">8. Future Enhancements</h2>
+  <p>While the current version provides complete bus search and booking functionality, the following enhancements are planned for future iterations:</p>
+
+  <table>
+    <tr><th>#</th><th>Enhancement</th><th>Description</th></tr>
+    <tr><td>1</td><td><strong>User Authentication</strong></td><td>Implement JWT-based login/registration using Spring Security so passengers can track their booking history.</td></tr>
+    <tr><td>2</td><td><strong>Payment Gateway</strong></td><td>Integrate Razorpay or Stripe for secure online payments. Current system assumes offline payment.</td></tr>
+    <tr><td>3</td><td><strong>Admin Dashboard</strong></td><td>Build an admin panel for bus operators to manage buses, routes, view bookings, and generate revenue reports.</td></tr>
+    <tr><td>4</td><td><strong>Booking Cancellation &amp; Refunds</strong></td><td>Allow passengers to cancel bookings with configurable refund policies based on cancellation timing.</td></tr>
+    <tr><td>5</td><td><strong>Email / SMS Notifications</strong></td><td>Send booking confirmations, reminders, and cancellation notices via email (JavaMailSender) or SMS (Twilio).</td></tr>
+    <tr><td>6</td><td><strong>Seat Type Differentiation</strong></td><td>Distinguish between window, aisle, and middle seats with different pricing tiers.</td></tr>
+    <tr><td>7</td><td><strong>Live Bus Tracking</strong></td><td>Integrate GPS tracking to show real-time bus locations on a map.</td></tr>
+    <tr><td>8</td><td><strong>Rating &amp; Review System</strong></td><td>Allow passengers to rate and review bus services after travel.</td></tr>
+    <tr><td>9</td><td><strong>Multi-Language Support</strong></td><td>Add internationalisation (i18n) for Hindi, Tamil, and other regional languages.</td></tr>
+    <tr><td>10</td><td><strong>Docker Deployment</strong></td><td>Containerise the application with Docker Compose for MongoDB + Spring Boot for one-command deployment.</td></tr>
+  </table>
+
+  <h2 id="ch9">9. Conclusion</h2>
+  <p>
+    The <strong>Bus Reservation System (BusVoyager)</strong> successfully demonstrates the design and implementation of a full-stack web application using modern Java technologies. The project achieves its stated objectives:
+  </p>
+  <ul>
+    <li>A clean, layered Spring Boot backend with RESTful APIs for bus search, seat availability, and booking management.</li>
+    <li>MongoDB as a flexible NoSQL datastore with Spring Data repository abstractions.</li>
+    <li>A visually premium frontend with interactive seat selection, real-time fare calculation, and printable booking tickets.</li>
+    <li>Robust error handling and graceful fallback behaviour when the backend is unavailable.</li>
+    <li>Comprehensive seed data covering multiple routes, buses, and sample bookings for immediate demonstration.</li>
+  </ul>
+  <p>
+    The project follows industry-standard practices including DTO pattern, global exception handling, CORS configuration, and responsive design. The modular architecture makes it easy to extend with authentication, payments, and admin features in future versions.
+  </p>
+  <p>
+    This project has been an excellent learning experience in full-stack development, covering backend API design, database modelling, frontend interactivity, and software engineering best practices.
+  </p>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════ -->
+<!--                   CHAPTER 10 – REFERENCES                  -->
+<!-- ════════════════════════════════════════════════════════════ -->
+<div class="page page-break">
+  <h2 id="ch10">10. References</h2>
+  <ol>
+    <li>Spring Boot Official Documentation — <a href="https://spring.io/projects/spring-boot">https://spring.io/projects/spring-boot</a></li>
+    <li>Spring Data MongoDB Reference — <a href="https://spring.io/projects/spring-data-mongodb">https://spring.io/projects/spring-data-mongodb</a></li>
+    <li>MongoDB Official Documentation — <a href="https://www.mongodb.com/docs/">https://www.mongodb.com/docs/</a></li>
+    <li>Project Lombok — <a href="https://projectlombok.org/">https://projectlombok.org/</a></li>
+    <li>Tailwind CSS Documentation — <a href="https://tailwindcss.com/docs">https://tailwindcss.com/docs</a></li>
+    <li>MDN Web Docs – Fetch API — <a href="https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API">https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API</a></li>
+    <li>Fielding, R. T. (2000). <em>Architectural Styles and the Design of Network-based Software Architectures</em>. Doctoral dissertation, University of California, Irvine.</li>
+    <li>Fowler, M. (2002). <em>Patterns of Enterprise Application Architecture</em>. Addison-Wesley Professional.</li>
+    <li>Baeldung — Spring Boot Tutorials — <a href="https://www.baeldung.com/spring-boot">https://www.baeldung.com/spring-boot</a></li>
+    <li>Apache Maven Documentation — <a href="https://maven.apache.org/guides/">https://maven.apache.org/guides/</a></li>
+  </ol>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════ -->
+<!--                   APPENDIX – SCHEMA SQL                    -->
+<!-- ════════════════════════════════════════════════════════════ -->
+<div class="page page-break">
+  <h2 id="appendix">Appendix — Database Schema &amp; Seed Data (schema.sql)</h2>
+<pre><code><span class="comment">-- ============================================================</span>
+<span class="comment">-- Bus Reservation System - Database Schema &amp; Seed Data</span>
+<span class="comment">-- ============================================================</span>
+
+<span class="keyword">CREATE DATABASE IF NOT EXISTS</span> bus_reservation;
+<span class="keyword">USE</span> bus_reservation;
+
+<span class="comment">-- Drop existing tables</span>
+<span class="keyword">DROP TABLE IF EXISTS</span> bookings;
+<span class="keyword">DROP TABLE IF EXISTS</span> buses;
+<span class="keyword">DROP TABLE IF EXISTS</span> routes;
+<span class="keyword">DROP TABLE IF EXISTS</span> users;
+
+<span class="comment">-- Table: users</span>
+<span class="keyword">CREATE TABLE</span> users (
+  id        <span class="type">BIGINT AUTO_INCREMENT PRIMARY KEY</span>,
+  name      <span class="type">VARCHAR(100)</span> <span class="keyword">NOT NULL</span>,
+  email     <span class="type">VARCHAR(100)</span> <span class="keyword">NOT NULL UNIQUE</span>,
+  phone     <span class="type">VARCHAR(15)</span>,
+  password_hash <span class="type">VARCHAR(255)</span>,
+  created_at <span class="type">TIMESTAMP</span> <span class="keyword">DEFAULT CURRENT_TIMESTAMP</span>
+);
+
+<span class="comment">-- Table: routes</span>
+<span class="keyword">CREATE TABLE</span> routes (
+  id          <span class="type">BIGINT AUTO_INCREMENT PRIMARY KEY</span>,
+  origin      <span class="type">VARCHAR(100)</span> <span class="keyword">NOT NULL</span>,
+  destination <span class="type">VARCHAR(100)</span> <span class="keyword">NOT NULL</span>,
+  distance_km <span class="type">INT</span>
+);
+
+<span class="comment">-- Table: buses</span>
+<span class="keyword">CREATE TABLE</span> buses (
+  id             <span class="type">BIGINT AUTO_INCREMENT PRIMARY KEY</span>,
+  bus_name       <span class="type">VARCHAR(100)</span> <span class="keyword">NOT NULL</span>,
+  bus_number     <span class="type">VARCHAR(20)</span>  <span class="keyword">NOT NULL</span>,
+  bus_type       <span class="type">ENUM</span>(<span class="string">'AC'</span>,<span class="string">'NON_AC'</span>,<span class="string">'SLEEPER'</span>,<span class="string">'SEMI_SLEEPER'</span>) <span class="keyword">NOT NULL</span>,
+  total_seats    <span class="type">INT</span> <span class="keyword">DEFAULT</span> 40,
+  route_id       <span class="type">BIGINT</span> <span class="keyword">NOT NULL</span>,
+  departure_time <span class="type">TIME</span> <span class="keyword">NOT NULL</span>,
+  arrival_time   <span class="type">TIME</span> <span class="keyword">NOT NULL</span>,
+  fare           <span class="type">DECIMAL(10,2)</span> <span class="keyword">NOT NULL</span>,
+  operating_days <span class="type">VARCHAR(100)</span> <span class="keyword">DEFAULT</span> <span class="string">'MON,TUE,WED,THU,FRI,SAT,SUN'</span>,
+  <span class="keyword">FOREIGN KEY</span> (route_id) <span class="keyword">REFERENCES</span> routes(id) <span class="keyword">ON DELETE CASCADE</span>
+);
+
+<span class="comment">-- Table: bookings</span>
+<span class="keyword">CREATE TABLE</span> bookings (
+  id              <span class="type">BIGINT AUTO_INCREMENT PRIMARY KEY</span>,
+  passenger_name  <span class="type">VARCHAR(100)</span> <span class="keyword">NOT NULL</span>,
+  passenger_email <span class="type">VARCHAR(100)</span> <span class="keyword">NOT NULL</span>,
+  passenger_phone <span class="type">VARCHAR(15)</span>,
+  bus_id          <span class="type">BIGINT</span> <span class="keyword">NOT NULL</span>,
+  travel_date     <span class="type">DATE</span> <span class="keyword">NOT NULL</span>,
+  seat_numbers    <span class="type">TEXT</span> <span class="keyword">NOT NULL</span>,
+  total_fare      <span class="type">DECIMAL(10,2)</span> <span class="keyword">NOT NULL</span>,
+  status          <span class="type">ENUM</span>(<span class="string">'CONFIRMED'</span>,<span class="string">'CANCELLED'</span>) <span class="keyword">DEFAULT</span> <span class="string">'CONFIRMED'</span>,
+  booking_time    <span class="type">TIMESTAMP</span> <span class="keyword">DEFAULT CURRENT_TIMESTAMP</span>,
+  <span class="keyword">FOREIGN KEY</span> (bus_id) <span class="keyword">REFERENCES</span> buses(id) <span class="keyword">ON DELETE CASCADE</span>
+);
+
+<span class="comment">-- Seed Data: users</span>
+<span class="keyword">INSERT INTO</span> users (name, email, phone) <span class="keyword">VALUES</span>
+(<span class="string">'Rahul Sharma'</span>, <span class="string">'rahul@example.com'</span>, <span class="string">'9876543210'</span>),
+(<span class="string">'Priya Patel'</span>,  <span class="string">'priya@example.com'</span>, <span class="string">'9876543211'</span>),
+(<span class="string">'Arjun Kumar'</span>,  <span class="string">'arjun@example.com'</span>, <span class="string">'9876543212'</span>);
+
+<span class="comment">-- Seed Data: routes (8 routes, 4 bidirectional pairs)</span>
+<span class="keyword">INSERT INTO</span> routes (id, origin, destination, distance_km) <span class="keyword">VALUES</span>
+(1, <span class="string">'Delhi'</span>,     <span class="string">'Mumbai'</span>,    1400),
+(2, <span class="string">'Mumbai'</span>,    <span class="string">'Delhi'</span>,     1400),
+(3, <span class="string">'Bangalore'</span>, <span class="string">'Chennai'</span>,   350),
+(4, <span class="string">'Chennai'</span>,   <span class="string">'Bangalore'</span>, 350),
+(5, <span class="string">'Hyderabad'</span>, <span class="string">'Pune'</span>,      560),
+(6, <span class="string">'Pune'</span>,      <span class="string">'Hyderabad'</span>, 560),
+(7, <span class="string">'Jaipur'</span>,    <span class="string">'Delhi'</span>,     280),
+(8, <span class="string">'Delhi'</span>,     <span class="string">'Jaipur'</span>,    280);
+
+<span class="comment">-- Seed Data: 12 buses across different routes</span>
+<span class="keyword">INSERT INTO</span> buses (id, bus_name, bus_number, bus_type, total_seats,
+  route_id, departure_time, arrival_time, fare, operating_days) <span class="keyword">VALUES</span>
+(1, <span class="string">'Royal Cruiser'</span>,      <span class="string">'KA-01-AB-1234'</span>, <span class="string">'AC'</span>,           40, 1,
+   <span class="string">'18:00:00'</span>, <span class="string">'06:00:00'</span>, 1299.00, <span class="string">'MON,TUE,WED,THU,FRI,SAT,SUN'</span>),
+(2, <span class="string">'Star Express'</span>,       <span class="string">'KA-01-CD-5678'</span>, <span class="string">'SLEEPER'</span>,      40, 1,
+   <span class="string">'20:00:00'</span>, <span class="string">'08:00:00'</span>,  899.00, <span class="string">'MON,TUE,WED,THU,FRI,SAT,SUN'</span>),
+<span class="comment">-- ... (10 more buses omitted for brevity)</span>
+(12, <span class="string">'Pink City Express'</span>,  <span class="string">'DL-01-MN-4433'</span>, <span class="string">'AC'</span>,          40, 8,
+   <span class="string">'16:00:00'</span>, <span class="string">'21:00:00'</span>,  399.00, <span class="string">'MON,TUE,WED,THU,FRI,SAT,SUN'</span>);
+
+<span class="comment">-- Seed Data: sample bookings</span>
+<span class="keyword">INSERT INTO</span> bookings (passenger_name, passenger_email, passenger_phone,
+  bus_id, travel_date, seat_numbers, total_fare, status) <span class="keyword">VALUES</span>
+(<span class="string">'Rahul Sharma'</span>, <span class="string">'rahul@example.com'</span>, <span class="string">'9876543210'</span>,
+  1, <span class="string">'2026-07-26'</span>, <span class="string">'[1,2,5,6]'</span>, 5196.00, <span class="string">'CONFIRMED'</span>),
+(<span class="string">'Priya Patel'</span>,  <span class="string">'priya@example.com'</span>, <span class="string">'9876543211'</span>,
+  1, <span class="string">'2026-07-26'</span>, <span class="string">'[11,12,15]'</span>, 3897.00, <span class="string">'CONFIRMED'</span>),
+(<span class="string">'Arjun Kumar'</span>,  <span class="string">'arjun@example.com'</span>, <span class="string">'9876543212'</span>,
+  6, <span class="string">'2026-07-26'</span>, <span class="string">'[3,4,7,8]'</span>, 1996.00, <span class="string">'CONFIRMED'</span>);</code></pre>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════ -->
+<!--                 APPENDIX – POM.XML                         -->
+<!-- ════════════════════════════════════════════════════════════ -->
+<div class="page page-break">
+  <h2>Appendix B — Maven Configuration (pom.xml)</h2>
+<pre><code><span class="keyword">&lt;?xml</span> version=<span class="string">"1.0"</span> encoding=<span class="string">"UTF-8"</span><span class="keyword">?&gt;</span>
+<span class="keyword">&lt;project</span> xmlns=<span class="string">"http://maven.apache.org/POM/4.0.0"</span><span class="keyword">&gt;</span>
+    <span class="keyword">&lt;modelVersion&gt;</span>4.0.0<span class="keyword">&lt;/modelVersion&gt;</span>
+    <span class="keyword">&lt;parent&gt;</span>
+        <span class="keyword">&lt;groupId&gt;</span>org.springframework.boot<span class="keyword">&lt;/groupId&gt;</span>
+        <span class="keyword">&lt;artifactId&gt;</span>spring-boot-starter-parent<span class="keyword">&lt;/artifactId&gt;</span>
+        <span class="keyword">&lt;version&gt;</span>3.4.1<span class="keyword">&lt;/version&gt;</span>
+    <span class="keyword">&lt;/parent&gt;</span>
+    <span class="keyword">&lt;groupId&gt;</span>com.busreserve<span class="keyword">&lt;/groupId&gt;</span>
+    <span class="keyword">&lt;artifactId&gt;</span>bus-reservation<span class="keyword">&lt;/artifactId&gt;</span>
+    <span class="keyword">&lt;version&gt;</span>0.0.1-SNAPSHOT<span class="keyword">&lt;/version&gt;</span>
+    <span class="keyword">&lt;name&gt;</span>bus-reservation<span class="keyword">&lt;/name&gt;</span>
+    <span class="keyword">&lt;description&gt;</span>Bus Reservation System Backend<span class="keyword">&lt;/description&gt;</span>
+    <span class="keyword">&lt;properties&gt;</span>
+        <span class="keyword">&lt;java.version&gt;</span>25<span class="keyword">&lt;/java.version&gt;</span>
+    <span class="keyword">&lt;/properties&gt;</span>
+    <span class="keyword">&lt;dependencies&gt;</span>
+        <span class="keyword">&lt;dependency&gt;</span>
+            <span class="keyword">&lt;groupId&gt;</span>org.springframework.boot<span class="keyword">&lt;/groupId&gt;</span>
+            <span class="keyword">&lt;artifactId&gt;</span>spring-boot-starter-web<span class="keyword">&lt;/artifactId&gt;</span>
+        <span class="keyword">&lt;/dependency&gt;</span>
+        <span class="keyword">&lt;dependency&gt;</span>
+            <span class="keyword">&lt;groupId&gt;</span>org.springframework.boot<span class="keyword">&lt;/groupId&gt;</span>
+            <span class="keyword">&lt;artifactId&gt;</span>spring-boot-starter-data-mongodb<span class="keyword">&lt;/artifactId&gt;</span>
+        <span class="keyword">&lt;/dependency&gt;</span>
+        <span class="keyword">&lt;dependency&gt;</span>
+            <span class="keyword">&lt;groupId&gt;</span>org.springframework.boot<span class="keyword">&lt;/groupId&gt;</span>
+            <span class="keyword">&lt;artifactId&gt;</span>spring-boot-starter-validation<span class="keyword">&lt;/artifactId&gt;</span>
+        <span class="keyword">&lt;/dependency&gt;</span>
+        <span class="keyword">&lt;dependency&gt;</span>
+            <span class="keyword">&lt;groupId&gt;</span>org.projectlombok<span class="keyword">&lt;/groupId&gt;</span>
+            <span class="keyword">&lt;artifactId&gt;</span>lombok<span class="keyword">&lt;/artifactId&gt;</span>
+            <span class="keyword">&lt;optional&gt;</span>true<span class="keyword">&lt;/optional&gt;</span>
+        <span class="keyword">&lt;/dependency&gt;</span>
+    <span class="keyword">&lt;/dependencies&gt;</span>
+    <span class="keyword">&lt;build&gt;</span>
+        <span class="keyword">&lt;plugins&gt;</span>
+            <span class="keyword">&lt;plugin&gt;</span>
+                <span class="keyword">&lt;groupId&gt;</span>org.springframework.boot<span class="keyword">&lt;/groupId&gt;</span>
+                <span class="keyword">&lt;artifactId&gt;</span>spring-boot-maven-plugin<span class="keyword">&lt;/artifactId&gt;</span>
+            <span class="keyword">&lt;/plugin&gt;</span>
+            <span class="keyword">&lt;plugin&gt;</span>
+                <span class="keyword">&lt;groupId&gt;</span>org.apache.maven.plugins<span class="keyword">&lt;/groupId&gt;</span>
+                <span class="keyword">&lt;artifactId&gt;</span>maven-compiler-plugin<span class="keyword">&lt;/artifactId&gt;</span>
+                <span class="keyword">&lt;configuration&gt;</span>
+                    <span class="keyword">&lt;release&gt;</span>25<span class="keyword">&lt;/release&gt;</span>
+                <span class="keyword">&lt;/configuration&gt;</span>
+            <span class="keyword">&lt;/plugin&gt;</span>
+        <span class="keyword">&lt;/plugins&gt;</span>
+    <span class="keyword">&lt;/build&gt;</span>
+<span class="keyword">&lt;/project&gt;</span></code></pre>
+
+  <div style="margin-top: 40px; text-align: center; color: #999; font-size: 10pt;">
+    <hr style="border: none; border-top: 2px solid #3f51b5; width: 60%; margin: 0 auto 16px;">
+    <p><strong>— End of Report —</strong></p>
+    <p>Bus Reservation System (BusVoyager) &bull; Project Report &bull; July 2026</p>
+  </div>
+</div>
+
+</body>
+</html>
