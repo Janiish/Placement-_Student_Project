@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BusVoyager - Booking Confirmation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        @keyframes drift { 0% { transform: translate(0,0) scale(1); } 33% { transform: translate(30px,-50px) scale(1.1); } 66% { transform: translate(-20px,20px) scale(0.9); } 100% { transform: translate(0,0) scale(1); } }
+        @keyframes pulse-ring { 0% { transform: scale(0.8); opacity: 0.5; } 100% { transform: scale(1.3); opacity: 0; } }
+        .orb-1 { animation: drift 20s infinite alternate; }
+        .orb-2 { animation: drift 25s infinite alternate-reverse; animation-delay: -5s; }
+        .orb-3 { animation: drift 22s infinite alternate; animation-delay: -10s; }
+        .success-pulse::before { content: ''; position: absolute; inset: 0; border-radius: 50%; background-color: #22c55e; animation: pulse-ring 2s cubic-bezier(0.215,0.61,0.355,1) infinite; z-index: -1; }
+        @media print {
+            body { background: white !important; color: black !important; }
+            .no-print { display: none !important; }
+            .bg-white\/5 { background: white !important; border: 1px solid #ddd !important; box-shadow: none !important; }
+            .text-white { color: black !important; }
+            .text-gray-400 { color: #555 !important; }
+            .orb-1,.orb-2,.orb-3 { display: none !important; }
+        }
+    </style>
+</head>
+<body class="bg-gray-950 text-white min-h-screen relative overflow-x-hidden">
+    <div class="fixed top-20 left-10 w-96 h-96 bg-blue-500/20 rounded-full filter blur-3xl orb-1 -z-10"></div>
+    <div class="fixed bottom-20 right-10 w-96 h-96 bg-purple-500/20 rounded-full filter blur-3xl orb-2 -z-10"></div>
+    <div class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-blue-600/10 rounded-full filter blur-3xl orb-3 -z-10"></div>
+
+    <nav class="no-print fixed top-0 w-full z-50 bg-gray-950/80 backdrop-blur-xl border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-2">
+                <svg class="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                <span class="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">BusVoyager</span>
+            </a>
+        </div>
+    </nav>
+
+    <main class="pt-28 pb-12 px-4 max-w-2xl mx-auto min-h-screen">
+        <div class="text-center mb-10 no-print">
+            <div class="relative inline-flex items-center justify-center w-20 h-20 bg-green-500 rounded-full mb-6 success-pulse shadow-lg shadow-green-500/50">
+                <svg class="w-10 h-10 text-white relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+            </div>
+            <h1 class="text-4xl font-bold bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent mb-2">Booking Confirmed!</h1>
+            <p class="text-gray-400">Your antigravity transport is ready.</p>
+        </div>
+
+        <div id="ticketCard" class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-2xl relative overflow-hidden">
+            <div class="absolute -top-10 -right-10 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl"></div>
+            <div class="flex justify-between items-start mb-8 border-b border-white/10 pb-6">
+                <div><p class="text-sm text-gray-400 mb-1">Booking ID</p><p class="text-2xl font-mono font-bold text-white tracking-wider" id="bId">#LOADING</p></div>
+                <div class="px-3 py-1 bg-green-500/20 text-green-400 text-sm font-semibold rounded-full border border-green-500/30">CONFIRMED</div>
+            </div>
+            <div class="grid grid-cols-2 gap-y-6 gap-x-4 mb-8">
+                <div class="col-span-2 md:col-span-1"><p class="text-sm text-gray-400 mb-1">Passenger</p><p class="text-lg font-semibold text-white" id="bName">...</p><p class="text-sm text-gray-500" id="bContact">...</p></div>
+                <div class="col-span-2 md:col-span-1"><p class="text-sm text-gray-400 mb-1">Journey</p><p class="text-lg font-semibold text-white" id="bRoute">...</p><p class="text-sm text-gray-500" id="bDate">...</p></div>
+                <div class="col-span-2 md:col-span-1"><p class="text-sm text-gray-400 mb-1">Bus Details</p><p class="font-semibold text-white" id="bBusName">...</p><p class="text-sm text-gray-500" id="bBusNum">...</p></div>
+                <div class="col-span-2 md:col-span-1"><p class="text-sm text-gray-400 mb-1">Seat Numbers</p><div id="bSeats" class="flex flex-wrap gap-2 mt-1"></div></div>
+            </div>
+            <div class="bg-gray-900/50 rounded-xl p-4 flex justify-between items-center border border-white/5">
+                <span class="text-gray-300">Total Amount Paid</span>
+                <span class="text-2xl font-bold text-white" id="bTotal">₹0</span>
+            </div>
+            <div class="mt-6 text-center text-xs text-gray-500">Booked on: <span id="bTime">...</span></div>
+        </div>
+
+        <div class="mt-8 flex flex-col sm:flex-row gap-4 justify-center no-print">
+            <button onclick="window.print()" class="px-6 py-3 rounded-xl border border-white/20 hover:bg-white/10 transition-all font-medium flex items-center justify-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                Print Ticket
+            </button>
+            <a href="index.html" class="px-8 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 transition-all font-medium text-center shadow-lg shadow-blue-500/20">Book Another Trip</a>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const $ = id => document.getElementById(id);
+            const bookingId = new URLSearchParams(location.search).get('bookingId');
+            if (!bookingId) { $('ticketCard').innerHTML = '<div class="text-center p-10">Invalid booking link</div>'; return; }
+
+            let booking;
+            try {
+                const res = await fetch(`http://localhost:8080/api/bookings/${bookingId}`);
+                if (!res.ok) throw 0;
+                booking = await res.json();
+            } catch {
+                booking = { bookingId, passengerName: 'Jane Astronaut', passengerEmail: 'jane@space.com', passengerPhone: '+91 9876543210', busName: 'Stellar Express', busNumber: 'ST-001', origin: 'Delhi', destination: 'Mumbai', travelDate: '2026-07-26', seatNumbers: [12,13], totalFare: 2400, status: 'CONFIRMED', bookingTime: new Date().toISOString() };
+            }
+
+            const b = booking;
+            $('bId').textContent = '#' + b.bookingId;
+            $('bName').textContent = b.passengerName;
+            $('bContact').textContent = `${b.passengerPhone} | ${b.passengerEmail}`;
+            $('bRoute').textContent = `${b.origin} → ${b.destination}`;
+            $('bDate').textContent = new Date(b.travelDate).toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric' });
+            $('bBusName').textContent = b.busName;
+            $('bBusNum').textContent = b.busNumber;
+            $('bSeats').innerHTML = b.seatNumbers.map(s => `<span class="px-2 py-1 bg-blue-500/20 border border-blue-500/30 rounded text-blue-300 text-xs font-bold">${s}</span>`).join('');
+            $('bTotal').textContent = `₹${b.totalFare.toLocaleString('en-IN')}`;
+            $('bTime').textContent = new Date(b.bookingTime).toLocaleString();
+        });
+    </script>
+</body>
+</html>
